@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { usePathname, useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
@@ -248,77 +248,61 @@ const advancedModules = [
 
 interface SidebarProps {
   isOpen?: boolean
-  onToggle?: () => void
+  onClose?: () => void
+  isCollapsed?: boolean
+  onToggleCollapse?: () => void
 }
 
-export function Sidebar({ isOpen = true, onToggle }: SidebarProps) {
+export function Sidebar({ isOpen = true, onClose, isCollapsed = false, onToggleCollapse }: SidebarProps) {
   const pathname = usePathname()
   const router = useRouter()
   const [isNewFeaturesExpanded, setIsNewFeaturesExpanded] = useState(true)
-  const [isMobile, setIsMobile] = useState(false)
-
-  // 检测移动端
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768)
-    }
-
-    checkMobile()
-    window.addEventListener("resize", checkMobile)
-    return () => window.removeEventListener("resize", checkMobile)
-  }, [])
 
   const isActive = (href: string) => pathname === href
 
   const handleNavigation = (href: string) => {
     router.push(href)
-    // 移动端导航后自动关闭侧边栏
-    if (isMobile && onToggle) {
-      onToggle()
-    }
   }
 
   return (
     <>
       {/* 移动端遮罩层 */}
-      {isMobile && isOpen && <div className="fixed inset-0 bg-black/50 z-40 md:hidden" onClick={onToggle} />}
+      {isOpen && <div className="fixed inset-0 bg-black/50 z-40 md:hidden" onClick={onClose} />}
 
       {/* 侧边栏 */}
       <div
         className={`
-        ${isMobile ? "fixed" : "relative"} 
-        ${isMobile ? "z-50" : "z-10"}
-        ${isMobile && !isOpen ? "-translate-x-full" : "translate-x-0"}
-        ${!isMobile && !isOpen ? "w-0 overflow-hidden" : "w-64"}
-        bg-white border-r border-gray-200 flex flex-col h-full
-        transition-all duration-300 ease-in-out
-        ${isMobile ? "shadow-xl" : ""}
-      `}
+      ${isCollapsed ? "w-16" : "w-64"} 
+      bg-white border-r border-gray-200 flex flex-col h-full transition-all duration-300 ease-in-out
+      fixed md:relative z-50 md:z-auto
+      ${isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
+    `}
       >
         {/* Logo区域 */}
-        <div className="p-6 border-b border-gray-200 relative">
-          {/* 移动端关闭按钮 */}
-          {isMobile && (
-            <Button
-              variant="ghost"
-              size="sm"
-              className="absolute top-4 right-4 w-8 h-8 p-0 hover:bg-gray-100"
-              onClick={onToggle}
-            >
-              <X className="w-4 h-4" />
-            </Button>
-          )}
-
-          <div className="flex items-center justify-center">
-            <Image
-              src="/images/jinlan-complete-logo.png"
-              alt="锦澜家居"
-              width={180}
-              height={80}
-              className="h-20 w-auto object-contain"
-              priority
-            />
+        <div className="p-6 border-b border-gray-200 flex items-center justify-between">
+          <div
+            className={`flex items-center justify-center transition-all duration-300 ${isCollapsed ? "w-8" : "w-full"}`}
+          >
+            {!isCollapsed ? (
+              <Image
+                src="/images/jinlan-complete-logo.png"
+                alt="锦澜家居"
+                width={180}
+                height={80}
+                className="h-20 w-auto object-contain"
+                priority
+              />
+            ) : (
+              <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                <span className="text-white font-bold text-sm">锦</span>
+              </div>
+            )}
           </div>
+
+          {/* 移动端关闭按钮 */}
+          <Button variant="ghost" size="sm" className="md:hidden w-8 h-8 p-0" onClick={onClose}>
+            <X className="w-4 h-4" />
+          </Button>
         </div>
 
         {/* 导航内容 */}
@@ -332,13 +316,20 @@ export function Sidebar({ isOpen = true, onToggle }: SidebarProps) {
                 <Button
                   key={item.href}
                   variant="ghost"
-                  className={`w-full justify-start h-10 px-3 border-l-4 transition-all duration-200 ${
+                  className={`w-full ${isCollapsed ? "justify-center px-2" : "justify-start px-3"} h-10 border-l-4 transition-all duration-200 group relative ${
                     active ? item.activeColor : `border-l-transparent ${item.color}`
-                  }`}
+                  } hover:scale-105 active:scale-95`}
                   onClick={() => handleNavigation(item.href)}
                 >
                   <Icon className="w-4 h-4 mr-3 flex-shrink-0" />
-                  <span className="font-medium truncate">{item.title}</span>
+                  {!isCollapsed && <span className="font-medium">{item.title}</span>}
+
+                  {/* 折叠状态下的提示 */}
+                  {isCollapsed && (
+                    <div className="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-50">
+                      {item.title}
+                    </div>
+                  )}
                 </Button>
               )
             })}
@@ -347,21 +338,25 @@ export function Sidebar({ isOpen = true, onToggle }: SidebarProps) {
             <div className="mt-6">
               <Button
                 variant="ghost"
-                className="w-full justify-between h-10 px-3 text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                className={`w-full ${isCollapsed ? "justify-center px-2" : "justify-between px-3"} h-10 text-gray-600 hover:text-gray-900 hover:bg-gray-50 group relative`}
                 onClick={() => setIsNewFeaturesExpanded(!isNewFeaturesExpanded)}
               >
                 <div className="flex items-center">
                   <Home className="w-4 h-4 mr-3 flex-shrink-0" />
-                  <span className="font-medium truncate">新功能模块</span>
+                  {!isCollapsed && <span className="font-medium">新功能模块</span>}
                 </div>
-                {isNewFeaturesExpanded ? (
-                  <ChevronDown className="w-4 h-4 flex-shrink-0" />
-                ) : (
-                  <ChevronRight className="w-4 h-4 flex-shrink-0" />
+                {!isCollapsed &&
+                  (isNewFeaturesExpanded ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />)}
+
+                {/* 折叠状态下的提示 */}
+                {isCollapsed && (
+                  <div className="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-50">
+                    新功能模块
+                  </div>
                 )}
               </Button>
 
-              {isNewFeaturesExpanded && (
+              {isNewFeaturesExpanded && !isCollapsed && (
                 <div className="ml-4 mt-2 space-y-1">
                   {newFeatureModules.map((item) => {
                     const Icon = item.icon
@@ -370,13 +365,13 @@ export function Sidebar({ isOpen = true, onToggle }: SidebarProps) {
                       <Button
                         key={item.href}
                         variant="ghost"
-                        className={`w-full justify-start h-9 px-3 border-l-4 transition-all duration-200 ${
+                        className={`w-full justify-start h-9 px-3 border-l-4 transition-all duration-200 hover:scale-105 active:scale-95 ${
                           active ? item.activeColor : `border-l-transparent ${item.color}`
                         }`}
                         onClick={() => handleNavigation(item.href)}
                       >
-                        <Icon className="w-4 h-4 mr-3 flex-shrink-0" />
-                        <span className="text-sm truncate">{item.title}</span>
+                        <Icon className="w-4 h-4 mr-3" />
+                        <span className="text-sm">{item.title}</span>
                       </Button>
                     )
                   })}
@@ -385,84 +380,127 @@ export function Sidebar({ isOpen = true, onToggle }: SidebarProps) {
             </div>
 
             {/* 核心功能 */}
-            <div className="mt-6">
-              <div className="px-3 py-2">
-                <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider truncate">核心功能</h3>
+            {!isCollapsed && (
+              <div className="mt-6">
+                <div className="px-3 py-2">
+                  <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">核心功能</h3>
+                </div>
+                <div className="space-y-1">
+                  {coreModules.map((item) => {
+                    const Icon = item.icon
+                    const active = isActive(item.href)
+                    return (
+                      <Button
+                        key={item.href}
+                        variant="ghost"
+                        className={`w-full justify-start h-9 px-3 border-l-4 transition-all duration-200 hover:scale-105 active:scale-95 ${
+                          active ? item.activeColor : `border-l-transparent ${item.color}`
+                        }`}
+                        onClick={() => handleNavigation(item.href)}
+                      >
+                        <Icon className="w-4 h-4 mr-3" />
+                        <span className="text-sm">{item.title}</span>
+                      </Button>
+                    )
+                  })}
+                </div>
               </div>
-              <div className="space-y-1">
-                {coreModules.map((item) => {
+            )}
+
+            {/* 折叠状态下的核心功能 */}
+            {isCollapsed && (
+              <div className="mt-6 space-y-1">
+                {coreModules.slice(0, 6).map((item) => {
                   const Icon = item.icon
                   const active = isActive(item.href)
                   return (
                     <Button
                       key={item.href}
                       variant="ghost"
-                      className={`w-full justify-start h-9 px-3 border-l-4 transition-all duration-200 ${
+                      className={`w-full justify-center h-9 px-2 border-l-4 transition-all duration-200 group relative hover:scale-105 active:scale-95 ${
                         active ? item.activeColor : `border-l-transparent ${item.color}`
                       }`}
                       onClick={() => handleNavigation(item.href)}
                     >
-                      <Icon className="w-4 h-4 mr-3 flex-shrink-0" />
-                      <span className="text-sm truncate">{item.title}</span>
+                      <Icon className="w-4 h-4" />
+                      <div className="absolute left-full ml-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-50">
+                        {item.title}
+                      </div>
                     </Button>
                   )
                 })}
               </div>
-            </div>
+            )}
 
             {/* 系统功能 */}
-            <div className="mt-6">
-              <div className="px-3 py-2">
-                <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider truncate">系统功能</h3>
+            {!isCollapsed && (
+              <div className="mt-6">
+                <div className="px-3 py-2">
+                  <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">系统功能</h3>
+                </div>
+                <div className="space-y-1">
+                  {systemModules.map((item) => {
+                    const Icon = item.icon
+                    const active = isActive(item.href)
+                    return (
+                      <Button
+                        key={item.href}
+                        variant="ghost"
+                        className={`w-full justify-start h-9 px-3 border-l-4 transition-all duration-200 hover:scale-105 active:scale-95 ${
+                          active ? item.activeColor : `border-l-transparent ${item.color}`
+                        }`}
+                        onClick={() => handleNavigation(item.href)}
+                      >
+                        <Icon className="w-4 h-4 mr-3" />
+                        <span className="text-sm">{item.title}</span>
+                      </Button>
+                    )
+                  })}
+                </div>
               </div>
-              <div className="space-y-1">
-                {systemModules.map((item) => {
-                  const Icon = item.icon
-                  const active = isActive(item.href)
-                  return (
-                    <Button
-                      key={item.href}
-                      variant="ghost"
-                      className={`w-full justify-start h-9 px-3 border-l-4 transition-all duration-200 ${
-                        active ? item.activeColor : `border-l-transparent ${item.color}`
-                      }`}
-                      onClick={() => handleNavigation(item.href)}
-                    >
-                      <Icon className="w-4 h-4 mr-3 flex-shrink-0" />
-                      <span className="text-sm truncate">{item.title}</span>
-                    </Button>
-                  )
-                })}
-              </div>
-            </div>
+            )}
 
             {/* 高级功能 */}
-            <div className="mt-6">
-              <div className="px-3 py-2">
-                <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider truncate">高级功能</h3>
+            {!isCollapsed && (
+              <div className="mt-6">
+                <div className="px-3 py-2">
+                  <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">高级功能</h3>
+                </div>
+                <div className="space-y-1">
+                  {advancedModules.map((item) => {
+                    const Icon = item.icon
+                    const active = isActive(item.href)
+                    return (
+                      <Button
+                        key={item.href}
+                        variant="ghost"
+                        className={`w-full justify-start h-9 px-3 border-l-4 transition-all duration-200 hover:scale-105 active:scale-95 ${
+                          active ? item.activeColor : `border-l-transparent ${item.color}`
+                        }`}
+                        onClick={() => handleNavigation(item.href)}
+                      >
+                        <Icon className="w-4 h-4 mr-3" />
+                        <span className="text-sm">{item.title}</span>
+                      </Button>
+                    )
+                  })}
+                </div>
               </div>
-              <div className="space-y-1">
-                {advancedModules.map((item) => {
-                  const Icon = item.icon
-                  const active = isActive(item.href)
-                  return (
-                    <Button
-                      key={item.href}
-                      variant="ghost"
-                      className={`w-full justify-start h-9 px-3 border-l-4 transition-all duration-200 ${
-                        active ? item.activeColor : `border-l-transparent ${item.color}`
-                      }`}
-                      onClick={() => handleNavigation(item.href)}
-                    >
-                      <Icon className="w-4 h-4 mr-3 flex-shrink-0" />
-                      <span className="text-sm truncate">{item.title}</span>
-                    </Button>
-                  )
-                })}
-              </div>
-            </div>
+            )}
           </div>
         </ScrollArea>
+
+        {/* 折叠/展开按钮 */}
+        <div className="p-4 border-t border-gray-200 hidden md:block">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="w-full justify-center h-8 hover:bg-gray-100 transition-colors"
+            onClick={onToggleCollapse}
+          >
+            {isCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+          </Button>
+        </div>
       </div>
     </>
   )

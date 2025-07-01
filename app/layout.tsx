@@ -1,16 +1,17 @@
 import type React from "react"
+import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import "./globals.css"
-import ClientLayout from "./ClientLayout"
+import { ClientLayout } from "./ClientLayout"
+import { ThemeProvider } from "@/components/theme-provider"
+import { Toaster } from "@/components/ui/toaster"
 
 const inter = Inter({ subsets: ["latin"] })
 
-export const metadata = {
-  title: "企业管理系统 - 金兰数据服务平台",
-  description: "专业的企业数据管理和业务协作平台",
-  manifest: "/manifest.json",
-  themeColor: "#3b82f6",
-  viewport: "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no",
+export const metadata: Metadata = {
+  title: "锦澜家居企业管理系统",
+  description: "专业的企业管理解决方案，提供客户管理、任务管理、数据分析等功能",
+  keywords: "企业管理,客户管理,任务管理,数据分析,锦澜家居",
     generator: 'v0.dev'
 }
 
@@ -19,5 +20,14 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
-  return <ClientLayout>{children}</ClientLayout>
+  return (
+    <html lang="zh-CN" suppressHydrationWarning>
+      <body className={inter.className}>
+        <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false} disableTransitionOnChange>
+          <ClientLayout>{children}</ClientLayout>
+          <Toaster />
+        </ThemeProvider>
+      </body>
+    </html>
+  )
 }

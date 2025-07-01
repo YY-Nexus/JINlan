@@ -1,14 +1,19 @@
 "use client"
 
+import { useState } from "react"
 import { PageContainer } from "@/components/layout/page-container"
 import { FloatingNavButtons } from "@/components/ui/floating-nav-buttons"
 import { EnhancedCard } from "@/components/ui/enhanced-card"
 import { EnhancedButton } from "@/components/ui/enhanced-button"
 import { Badge } from "@/components/ui/badge"
 import { FinanceChart } from "@/components/charts/finance-chart"
-import { DollarSign, TrendingUp, TrendingDown, Wallet, Receipt, Plus } from "lucide-react"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { DollarSign, TrendingUp, TrendingDown, Wallet, Receipt, Plus, AlertTriangle } from "lucide-react"
+import { getProgressColor } from "@/lib/design-system"
 
 export default function FinancePage() {
+  const [selectedPeriod, setSelectedPeriod] = useState("month")
+
   return (
     <PageContainer>
       <div className="space-y-6">
@@ -19,6 +24,16 @@ export default function FinancePage() {
             <p className="text-slate-600 mt-1">管理企业财务收支和预算</p>
           </div>
           <div className="flex gap-2">
+            <Select value={selectedPeriod} onValueChange={setSelectedPeriod}>
+              <SelectTrigger className="w-32">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="month">本月</SelectItem>
+                <SelectItem value="quarter">本季度</SelectItem>
+                <SelectItem value="year">本年度</SelectItem>
+              </SelectContent>
+            </Select>
             <EnhancedButton variant="outline">
               <Receipt className="w-4 h-4 mr-2" />
               生成报表
@@ -115,10 +130,10 @@ export default function FinancePage() {
             </div>
             <div className="space-y-3">
               {[
-                { description: "产品销售收入", amount: "+¥45,600", date: "2024-01-15", type: "销售" },
-                { description: "服务费收入", amount: "+¥12,300", date: "2024-01-14", type: "服务" },
-                { description: "投资收益", amount: "+¥8,900", date: "2024-01-13", type: "投资" },
-                { description: "其他收入", amount: "+¥3,200", date: "2024-01-12", type: "其他" },
+                { description: "产品销售收入", amount: "+¥45,600", date: "2025-01-15", type: "销售" },
+                { description: "服务费收入", amount: "+¥12,300", date: "2025-01-14", type: "服务" },
+                { description: "投资收益", amount: "+¥8,900", date: "2025-01-13", type: "投资" },
+                { description: "其他收入", amount: "+¥3,200", date: "2025-01-12", type: "其他" },
               ].map((item, index) => (
                 <div key={index} className="flex items-center justify-between p-3 border border-slate-200 rounded-lg">
                   <div className="flex items-center gap-3">
@@ -150,10 +165,10 @@ export default function FinancePage() {
             </div>
             <div className="space-y-3">
               {[
-                { description: "办公用品采购", amount: "-¥5,600", date: "2024-01-15", type: "采购" },
-                { description: "员工工资", amount: "-¥89,000", date: "2024-01-14", type: "人力" },
-                { description: "租金费用", amount: "-¥15,000", date: "2024-01-13", type: "租金" },
-                { description: "营销推广", amount: "-¥12,300", date: "2024-01-12", type: "营销" },
+                { description: "办公用品采购", amount: "-¥5,600", date: "2025-01-15", type: "采购" },
+                { description: "员工工资", amount: "-¥89,000", date: "2025-01-14", type: "人力" },
+                { description: "租金费用", amount: "-¥15,000", date: "2025-01-13", type: "租金" },
+                { description: "营销推广", amount: "-¥12,300", date: "2025-01-12", type: "营销" },
               ].map((item, index) => (
                 <div key={index} className="flex items-center justify-between p-3 border border-slate-200 rounded-lg">
                   <div className="flex items-center gap-3">
@@ -202,12 +217,16 @@ export default function FinancePage() {
                   </div>
                   <div className="w-full bg-slate-200 rounded-full h-2">
                     <div
-                      className={`h-2 rounded-full ${
-                        item.percentage > 80 ? "bg-red-500" : item.percentage > 60 ? "bg-yellow-500" : "bg-green-500"
-                      }`}
+                      className={`h-2 rounded-full transition-all duration-500 ${getProgressColor(item.percentage)}`}
                       style={{ width: `${item.percentage}%` }}
-                    ></div>
+                    />
                   </div>
+                  {item.percentage > 80 && (
+                    <div className="flex items-center text-xs text-amber-600">
+                      <AlertTriangle className="w-3 h-3 mr-1" />
+                      预算使用率较高
+                    </div>
+                  )}
                 </div>
               </div>
             ))}

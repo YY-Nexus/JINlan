@@ -6,7 +6,7 @@ import { FloatingNavButtons } from "@/components/ui/floating-nav-buttons"
 export default function TenantManagementPage() {
   return (
     <>
-      <TenantManagement />
+      <TenantManagement title="多门店管理" />
       <FloatingNavButtons />
     </>
   )

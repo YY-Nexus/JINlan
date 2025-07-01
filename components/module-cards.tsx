@@ -44,7 +44,7 @@ export function ModuleCards() {
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
       {/* 数据总览 - 绿色系 */}
       <Card
-        className="group cursor-pointer transition-all duration-300 hover:shadow-xl hover:scale-105 bg-gradient-to-br from-green-50 to-lime-50 border-green-200 border-l-4 border-l-green-400"
+        className="group cursor-pointer transition-all duration-300 hover:shadow-xl hover:scale-105 bg-gradient-to-br from-green-50 to-lime-50 border-green-200 border-l-4 border-l-emerald-400"
         onClick={() => handleModuleClick("dashboard")}
       >
         <CardContent className="p-6">
@@ -189,7 +189,7 @@ export function ModuleCards() {
         </CardContent>
       </Card>
 
-      {/* 安全中心 - 橙色系 */}
+      {/* 安全中心 - 红色系 */}
       <Card
         className="group cursor-pointer transition-all duration-300 hover:shadow-xl hover:scale-105 bg-gradient-to-br from-red-50 to-orange-50 border-red-200 border-l-4 border-l-red-400"
         onClick={() => handleModuleClick("security")}

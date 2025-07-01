@@ -1,14 +1,83 @@
 "use client"
 
+import { useState } from "react"
 import { PageContainer } from "@/components/layout/page-container"
 import { FloatingNavButtons } from "@/components/ui/floating-nav-buttons"
 import { EnhancedCard } from "@/components/ui/enhanced-card"
 import { EnhancedButton } from "@/components/ui/enhanced-button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
-import { MessageSquare, Users, Send, Phone, Video, Plus, Search, Paperclip } from "lucide-react"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { MessageSquare, Users, Send, Phone, Video, Plus, Search, Paperclip, Smile } from "lucide-react"
 
 export default function CommunicationPage() {
+  const [selectedChat, setSelectedChat] = useState("1")
+  const [message, setMessage] = useState("")
+
+  const chatList = [
+    {
+      id: "1",
+      name: "产品开发团队",
+      type: "group",
+      lastMessage: "新产品原型设计已完成，请大家查看",
+      time: "10:30",
+      unread: 3,
+      avatar: "/placeholder.svg?height=40&width=40",
+    },
+    {
+      id: "2",
+      name: "张经理",
+      type: "private",
+      lastMessage: "明天的会议时间需要调整一下",
+      time: "09:45",
+      unread: 1,
+      avatar: "/placeholder.svg?height=40&width=40",
+    },
+    {
+      id: "3",
+      name: "销售部门群",
+      type: "group",
+      lastMessage: "本月销售目标完成情况汇报",
+      time: "昨天",
+      unread: 0,
+      avatar: "/placeholder.svg?height=40&width=40",
+    },
+  ]
+
+  const messages = [
+    {
+      id: "1",
+      sender: "张经理",
+      content: "大家好，关于新产品的开发进度，我们需要加快推进",
+      time: "09:30",
+      isOwn: false,
+      avatar: "/placeholder.svg?height=32&width=32",
+    },
+    {
+      id: "2",
+      sender: "我",
+      content: "好的，我这边的设计稿已经完成了，稍后发给大家",
+      time: "09:32",
+      isOwn: true,
+      avatar: "/placeholder.svg?height=32&width=32",
+    },
+    {
+      id: "3",
+      sender: "李工程师",
+      content: "技术方案我已经评估过了，可行性很高",
+      time: "09:35",
+      isOwn: false,
+      avatar: "/placeholder.svg?height=32&width=32",
+    },
+  ]
+
+  const handleSendMessage = () => {
+    if (message.trim()) {
+      console.log("发送消息:", message)
+      setMessage("")
+    }
+  }
+
   return (
     <PageContainer>
       <div className="space-y-6">
@@ -96,32 +165,33 @@ export default function CommunicationPage() {
               </EnhancedButton>
             </div>
             <div className="space-y-2">
-              {[
-                { name: "产品开发团队", members: 8, unread: 3, online: true },
-                { name: "市场营销部", members: 12, unread: 0, online: true },
-                { name: "客户服务组", members: 6, unread: 2, online: false },
-                { name: "财务部门", members: 4, unread: 0, online: true },
-                { name: "人力资源", members: 5, unread: 1, online: false },
-              ].map((group, index) => (
+              {chatList.map((chat) => (
                 <div
-                  key={index}
-                  className="flex items-center justify-between p-3 rounded-lg hover:bg-slate-50 cursor-pointer transition-colors"
+                  key={chat.id}
+                  className={`flex items-center justify-between p-3 rounded-lg hover:bg-slate-50 cursor-pointer transition-colors ${
+                    selectedChat === chat.id ? "bg-blue-50 border border-blue-200" : ""
+                  }`}
+                  onClick={() => setSelectedChat(chat.id)}
                 >
                   <div className="flex items-center gap-3">
                     <div className="relative">
-                      <div className="w-10 h-10 bg-gradient-to-br from-sky-400 to-blue-500 rounded-full flex items-center justify-center text-white font-medium">
-                        {group.name.charAt(0)}
-                      </div>
-                      {group.online && (
+                      <Avatar className="w-10 h-10">
+                        <AvatarImage src={chat.avatar || "/placeholder.svg"} />
+                        <AvatarFallback>{chat.name.charAt(0)}</AvatarFallback>
+                      </Avatar>
+                      {chat.type === "group" && (
                         <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div>
                       )}
                     </div>
                     <div>
-                      <p className="font-medium text-slate-800">{group.name}</p>
-                      <p className="text-sm text-slate-600">{group.members} 成员</p>
+                      <p className="font-medium text-slate-800">{chat.name}</p>
+                      <p className="text-sm text-slate-600 truncate w-32">{chat.lastMessage}</p>
                     </div>
                   </div>
-                  {group.unread > 0 && <Badge className="bg-red-500 text-white">{group.unread}</Badge>}
+                  <div className="text-right">
+                    <p className="text-xs text-slate-500">{chat.time}</p>
+                    {chat.unread > 0 && <Badge className="bg-red-500 text-white mt-1">{chat.unread}</Badge>}
+                  </div>
                 </div>
               ))}
             </div>
@@ -133,9 +203,10 @@ export default function CommunicationPage() {
               {/* 聊天头部 */}
               <div className="flex items-center justify-between p-4 border-b border-slate-200">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-gradient-to-br from-sky-400 to-blue-500 rounded-full flex items-center justify-center text-white font-medium">
-                    产
-                  </div>
+                  <Avatar className="w-10 h-10">
+                    <AvatarImage src="/placeholder.svg?height=40&width=40" />
+                    <AvatarFallback>产</AvatarFallback>
+                  </Avatar>
                   <div>
                     <h3 className="font-medium text-slate-800">产品开发团队</h3>
                     <p className="text-sm text-slate-600">8 名成员，5 人在线</p>
@@ -153,21 +224,26 @@ export default function CommunicationPage() {
 
               {/* 消息列表 */}
               <div className="flex-1 p-4 overflow-y-auto space-y-4">
-                {[
-                  { sender: "张三", message: "大家好，今天的产品评审会议准备得怎么样了？", time: "10:30", isMe: false },
-                  { sender: "我", message: "已经准备好了，PPT和原型都已经完成", time: "10:32", isMe: true },
-                  { sender: "李四", message: "我这边的技术方案也准备好了，可以开始了", time: "10:33", isMe: false },
-                  { sender: "王五", message: "好的，那我们现在开始吧", time: "10:35", isMe: false },
-                ].map((msg, index) => (
-                  <div key={index} className={`flex ${msg.isMe ? "justify-end" : "justify-start"}`}>
-                    <div
-                      className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
-                        msg.isMe ? "bg-sky-500 text-white" : "bg-slate-100 text-slate-800"
-                      }`}
-                    >
-                      {!msg.isMe && <p className="text-xs font-medium mb-1">{msg.sender}</p>}
-                      <p className="text-sm">{msg.message}</p>
-                      <p className={`text-xs mt-1 ${msg.isMe ? "text-sky-100" : "text-slate-500"}`}>{msg.time}</p>
+                {messages.map((msg) => (
+                  <div key={msg.id} className={`flex ${msg.isOwn ? "justify-end" : "justify-start"}`}>
+                    <div className={`flex gap-3 max-w-xs lg:max-w-md ${msg.isOwn ? "flex-row-reverse" : ""}`}>
+                      <Avatar className="w-8 h-8">
+                        <AvatarImage src={msg.avatar || "/placeholder.svg"} />
+                        <AvatarFallback>{msg.sender.charAt(0)}</AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <div
+                          className={`px-4 py-2 rounded-lg ${
+                            msg.isOwn ? "bg-sky-500 text-white" : "bg-slate-100 text-slate-800"
+                          }`}
+                        >
+                          {!msg.isOwn && <p className="text-xs font-medium mb-1">{msg.sender}</p>}
+                          <p className="text-sm">{msg.content}</p>
+                        </div>
+                        <p className={`text-xs mt-1 ${msg.isOwn ? "text-right text-sky-100" : "text-slate-500"}`}>
+                          {msg.time}
+                        </p>
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -179,8 +255,21 @@ export default function CommunicationPage() {
                   <EnhancedButton size="sm" variant="outline">
                     <Paperclip className="w-4 h-4" />
                   </EnhancedButton>
-                  <Input placeholder="输入消息..." className="flex-1" />
-                  <EnhancedButton className="bg-sky-600 hover:bg-sky-700">
+                  <EnhancedButton size="sm" variant="outline">
+                    <Smile className="w-4 h-4" />
+                  </EnhancedButton>
+                  <Input
+                    placeholder="输入消息..."
+                    className="flex-1"
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    onKeyPress={(e) => {
+                      if (e.key === "Enter") {
+                        handleSendMessage()
+                      }
+                    }}
+                  />
+                  <EnhancedButton className="bg-sky-600 hover:bg-sky-700" onClick={handleSendMessage}>
                     <Send className="w-4 h-4" />
                   </EnhancedButton>
                 </div>

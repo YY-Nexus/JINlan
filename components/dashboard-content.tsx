@@ -1,468 +1,266 @@
 "use client"
 
+import { useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
+import { useRouter } from "next/navigation"
 import {
-  DollarSign,
-  Users,
   TrendingUp,
-  Target,
-  CheckCircle,
-  MessageSquare,
-  BarChart3,
-  Trophy,
+  Users,
+  DollarSign,
+  ShoppingCart,
+  ArrowUpRight,
   RefreshCw,
   Download,
-  Share,
-  Filter,
-  Settings,
+  Eye,
+  Target,
+  BarChart3,
+  Activity,
   Clock,
-  AlertCircle,
-  Calendar,
+  CheckCircle,
 } from "lucide-react"
-import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
-import { toast } from "@/hooks/use-toast"
-
-interface DashboardMetrics {
-  sales: {
-    current: number
-    target: number
-    growth: number
-    completion: number
-  }
-  customers: {
-    active: number
-    growth: number
-    new: number
-    returning: number
-  }
-  finance: {
-    revenue: number
-    growth: number
-    income: number
-    expense: number
-  }
-  projects: {
-    active: number
-    completed: number
-    inProgress: number
-    delayed: number
-  }
-  tasks: {
-    total: number
-    pending: number
-    completion: number
-  }
-  communication: {
-    active: number
-    newMessages: number
-    meetings: number
-    messages: number
-  }
-  analytics: {
-    accuracy: number
-    reports: number
-    sources: number
-  }
-  okr: {
-    achievement: number
-    completed: number
-    inProgress: number
-  }
-}
 
 export function DashboardContent() {
   const router = useRouter()
-  const [lastUpdate, setLastUpdate] = useState(new Date())
   const [isRefreshing, setIsRefreshing] = useState(false)
-  const [metrics, setMetrics] = useState<DashboardMetrics>({
-    sales: { current: 1423696, target: 1825000, growth: 6.3, completion: 78 },
-    customers: { active: 7924, growth: 4.1, new: 617, returning: 7307 },
-    finance: { revenue: 4462078, growth: 7.9, income: 6423696, expense: 1961618 },
-    projects: { active: 12, completed: 9, inProgress: 2, delayed: 1 },
-    tasks: { total: 78, pending: 16, completion: 79 },
-    communication: { active: 446, newMessages: 12, meetings: 23, messages: 424 },
-    analytics: { accuracy: 98.5, reports: 124, sources: 6 },
-    okr: { achievement: 85, completed: 9, inProgress: 2 },
-  })
-
-  // 模拟实时数据更新
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setMetrics((prev) => ({
-        ...prev,
-        customers: {
-          ...prev.customers,
-          active: prev.customers.active + Math.floor(Math.random() * 10) - 5,
-        },
-        communication: {
-          ...prev.communication,
-          newMessages: prev.communication.newMessages + Math.floor(Math.random() * 3),
-        },
-        analytics: {
-          ...prev.analytics,
-          reports: prev.analytics.reports + Math.floor(Math.random() * 2),
-        },
-      }))
-    }, 5000)
-
-    return () => clearInterval(interval)
-  }, [])
 
   const handleRefresh = async () => {
     setIsRefreshing(true)
-    try {
-      await new Promise((resolve) => setTimeout(resolve, 2000))
-      setLastUpdate(new Date())
-      toast({
-        title: "数据刷新成功",
-        description: "所有业务指标已更新到最新状态",
-      })
-    } catch (error) {
-      toast({
-        title: "刷新失败",
-        description: "请检查网络连接后重试",
-        variant: "destructive",
-      })
-    } finally {
-      setIsRefreshing(false)
-    }
+    // 模拟数据刷新
+    await new Promise((resolve) => setTimeout(resolve, 2000))
+    setIsRefreshing(false)
   }
 
   const handleExport = () => {
-    toast({
-      title: "导出成功",
-      description: "运营报表已生成并开始下载",
-    })
+    // 模拟导出功能
+    console.log("导出报表...")
   }
 
-  const handleShare = () => {
-    toast({
-      title: "分享成功",
-      description: "运营数据已生成分享链接",
-    })
-  }
-
-  const formatCurrency = (amount: number) => {
-    return `¥${amount.toLocaleString()}`
-  }
-
-  // 统一的彩色进度条组件
-  const ColoredProgress = ({ value, color }: { value: number; color: string }) => {
-    return (
-      <div className="w-full bg-slate-200 rounded-full h-2">
-        <div
-          className={`h-2 rounded-full transition-all duration-1000 ease-out ${color}`}
-          style={{ width: `${Math.min(100, Math.max(0, value))}%` }}
-        />
-      </div>
-    )
-  }
-
-  // 统一的按钮样式
-  const buttonStyles = {
-    primary:
-      "bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 text-white shadow-md hover:shadow-lg transition-all duration-200",
-    outline:
-      "border border-sky-200 text-sky-700 hover:bg-sky-50 hover:border-sky-300 bg-white shadow-sm hover:shadow-md transition-all duration-200",
+  const handleCardClick = (path: string) => {
+    router.push(path)
   }
 
   return (
-    <div className="p-6 space-y-6">
-      {/* 顶部操作栏 */}
+    <div className="space-y-6">
+      {/* 页面标题和操作按钮 */}
       <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-4">
-          <Button onClick={handleRefresh} disabled={isRefreshing} className={buttonStyles.outline}>
-            <RefreshCw className={`w-4 h-4 mr-2 ${isRefreshing ? "animate-spin" : ""}`} />
+        <div>
+          <h1 className="text-2xl font-bold text-slate-800">运营中心</h1>
+          <p className="text-slate-600 mt-1">实时监控业务数据，掌握企业运营状况</p>
+        </div>
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            onClick={handleRefresh}
+            disabled={isRefreshing}
+            className="flex items-center gap-2 bg-transparent"
+          >
+            <RefreshCw className={`w-4 h-4 ${isRefreshing ? "animate-spin" : ""}`} />
             刷新数据
           </Button>
-          <Button onClick={handleExport} className={buttonStyles.outline}>
-            <Download className="w-4 h-4 mr-2" />
+          <Button onClick={handleExport} className="bg-sky-600 hover:bg-sky-700 flex items-center gap-2">
+            <Download className="w-4 h-4" />
             导出报表
           </Button>
-          <Button onClick={handleShare} className={buttonStyles.outline}>
-            <Share className="w-4 h-4 mr-2" />
-            分享数据
-          </Button>
-        </div>
-        <div className="flex items-center space-x-2">
-          <Button size="sm" className={buttonStyles.outline}>
-            <Filter className="w-4 h-4 mr-1" />
-            筛选
-          </Button>
-          <Button size="sm" onClick={() => router.push("/settings")} className={buttonStyles.outline}>
-            <Settings className="w-4 h-4 mr-1" />
-            设置
-          </Button>
-          <div className="flex items-center text-sm text-slate-500 ml-4">
-            <Clock className="w-4 h-4 mr-1" />
-            最后更新: {lastUpdate.toLocaleTimeString()}
-          </div>
         </div>
       </div>
 
-      {/* 核心业务指标卡片 */}
+      {/* 核心指标卡片 */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {/* 销售业绩 */}
+        {/* 销售业绩卡片 */}
         <Card
-          className="border-l-4 border-l-blue-400 hover:shadow-lg transition-all duration-300 cursor-pointer"
-          onClick={() => router.push("/analytics")}
+          className="relative overflow-hidden bg-gradient-to-br from-blue-50 to-sky-50 border-l-4 border-l-blue-500 hover:shadow-lg transition-all duration-300 cursor-pointer group"
+          onClick={() => handleCardClick("/analytics")}
         >
-          <CardHeader className="pb-3">
-            <div className="flex items-center justify-between">
-              <div>
-                <CardTitle className="text-sm font-medium text-slate-600">销售业绩</CardTitle>
-                <p className="text-xs text-slate-500 mt-1">月度目标</p>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between mb-4">
+              <div className="p-3 bg-gradient-to-r from-blue-500 to-sky-600 rounded-xl">
+                <DollarSign className="w-8 h-8 text-white" />
               </div>
-              <div className="p-3 bg-blue-50 rounded-lg border border-blue-200">
-                <DollarSign className="w-8 h-8 text-blue-400" />
-              </div>
+              <Badge className="bg-blue-100 text-blue-800 border-blue-300">月度目标</Badge>
             </div>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <div>
-              <p className="text-2xl font-bold text-blue-600">{formatCurrency(metrics.sales.current)}</p>
-              <div className="flex items-center mt-1">
-                <TrendingUp className="w-3 h-3 text-green-500 mr-1" />
-                <span className="text-sm text-green-600 font-medium">+{metrics.sales.growth}%</span>
-                <span className="text-xs text-slate-500 ml-1">较上月</span>
+            <div className="space-y-2">
+              <h3 className="text-lg font-semibold text-slate-800 group-hover:translate-x-1 transition-transform duration-300">
+                销售业绩
+              </h3>
+              <p className="text-3xl font-bold text-blue-600">¥2,847,392</p>
+              <div className="flex items-center gap-2 text-sm">
+                <ArrowUpRight className="w-4 h-4 text-green-500" />
+                <span className="text-green-600 font-medium">+12.5%</span>
+                <span className="text-slate-600">较上月</span>
               </div>
-            </div>
-            <div>
-              <div className="flex justify-between text-sm mb-1">
-                <span className="text-slate-600">目标完成率</span>
-                <span className="font-medium">{metrics.sales.completion}%</span>
-              </div>
-              <ColoredProgress value={metrics.sales.completion} color="bg-gradient-to-r from-blue-400 to-blue-500" />
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* 客户管理 */}
-        <Card
-          className="border-l-4 border-l-green-400 hover:shadow-lg transition-all duration-300 cursor-pointer"
-          onClick={() => router.push("/customers")}
-        >
-          <CardHeader className="pb-3">
-            <div className="flex items-center justify-between">
-              <div>
-                <CardTitle className="text-sm font-medium text-slate-600">客户管理</CardTitle>
-                <p className="text-xs text-slate-500 mt-1">活跃用户</p>
-              </div>
-              <div className="p-3 bg-green-50 rounded-lg border border-green-200">
-                <Users className="w-8 h-8 text-green-400" />
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <div>
-              <p className="text-2xl font-bold text-green-600">{metrics.customers.active.toLocaleString()}</p>
-              <div className="flex items-center mt-1">
-                <TrendingUp className="w-3 h-3 text-green-500 mr-1" />
-                <span className="text-sm text-green-600 font-medium">+{metrics.customers.growth}%</span>
-                <span className="text-xs text-slate-500 ml-1">新增客户</span>
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4 text-sm">
-              <div className="text-center p-2 bg-green-50 rounded border border-green-200">
-                <p className="text-lg font-bold text-green-600">{metrics.customers.new.toLocaleString()}</p>
-                <p className="text-xs text-slate-600">新客户</p>
-              </div>
-              <div className="text-center p-2 bg-blue-50 rounded border border-blue-200">
-                <p className="text-lg font-bold text-blue-600">{metrics.customers.returning.toLocaleString()}</p>
-                <p className="text-xs text-slate-600">老客户</p>
+              <div className="mt-3">
+                <div className="flex justify-between text-sm text-slate-600 mb-1">
+                  <span>完成进度</span>
+                  <span>78%</span>
+                </div>
+                <div className="w-full bg-slate-200 rounded-full h-2">
+                  <div
+                    className="bg-gradient-to-r from-blue-400 via-blue-500 to-blue-600 h-2 rounded-full transition-all duration-500"
+                    style={{ width: "78%" }}
+                  ></div>
+                </div>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* 财务状况 */}
+        {/* 客户管理卡片 */}
         <Card
-          className="border-l-4 border-l-yellow-400 hover:shadow-lg transition-all duration-300 cursor-pointer"
-          onClick={() => router.push("/finance")}
+          className="relative overflow-hidden bg-gradient-to-br from-green-50 to-emerald-50 border-l-4 border-l-green-500 hover:shadow-lg transition-all duration-300 cursor-pointer group"
+          onClick={() => handleCardClick("/customers")}
         >
-          <CardHeader className="pb-3">
-            <div className="flex items-center justify-between">
-              <div>
-                <CardTitle className="text-sm font-medium text-slate-600">财务状况</CardTitle>
-                <p className="text-xs text-slate-500 mt-1">实时数据</p>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between mb-4">
+              <div className="p-3 bg-gradient-to-r from-green-500 to-emerald-600 rounded-xl">
+                <Users className="w-8 h-8 text-white" />
               </div>
-              <div className="p-3 bg-yellow-50 rounded-lg border border-yellow-200">
-                <TrendingUp className="w-8 h-8 text-yellow-400" />
-              </div>
+              <Badge className="bg-green-100 text-green-800 border-green-300">活跃用户</Badge>
             </div>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <div>
-              <p className="text-2xl font-bold text-yellow-600">{formatCurrency(metrics.finance.revenue)}</p>
-              <div className="flex items-center mt-1">
-                <TrendingUp className="w-3 h-3 text-green-500 mr-1" />
-                <span className="text-sm text-green-600 font-medium">+{metrics.finance.growth}%</span>
-                <span className="text-xs text-slate-500 ml-1">净利润</span>
+            <div className="space-y-2">
+              <h3 className="text-lg font-semibold text-slate-800 group-hover:translate-x-1 transition-transform duration-300">
+                客户管理
+              </h3>
+              <p className="text-3xl font-bold text-green-600">15,847</p>
+              <div className="flex items-center gap-2 text-sm">
+                <ArrowUpRight className="w-4 h-4 text-green-500" />
+                <span className="text-green-600 font-medium">+8.3%</span>
+                <span className="text-slate-600">新增客户</span>
               </div>
-            </div>
-            <div className="space-y-1 text-sm">
-              <div className="flex justify-between">
-                <span className="text-slate-600">收入</span>
-                <span className="font-medium text-green-600">{formatCurrency(metrics.finance.income)}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-slate-600">支出</span>
-                <span className="font-medium text-red-600">{formatCurrency(metrics.finance.expense)}</span>
+              <div className="mt-3">
+                <div className="flex justify-between text-sm text-slate-600 mb-1">
+                  <span>活跃度</span>
+                  <span>85%</span>
+                </div>
+                <div className="w-full bg-slate-200 rounded-full h-2">
+                  <div
+                    className="bg-gradient-to-r from-green-400 via-green-500 to-green-600 h-2 rounded-full transition-all duration-500"
+                    style={{ width: "85%" }}
+                  ></div>
+                </div>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* 项目进度 */}
+        {/* 财务状况卡片 */}
         <Card
-          className="border-l-4 border-l-purple-400 hover:shadow-lg transition-all duration-300 cursor-pointer"
-          onClick={() => router.push("/projects")}
+          className="relative overflow-hidden bg-gradient-to-br from-orange-50 to-amber-50 border-l-4 border-l-orange-500 hover:shadow-lg transition-all duration-300 cursor-pointer group"
+          onClick={() => handleCardClick("/finance")}
         >
-          <CardHeader className="pb-3">
-            <div className="flex items-center justify-between">
-              <div>
-                <CardTitle className="text-sm font-medium text-slate-600">项目进度</CardTitle>
-                <p className="text-xs text-slate-500 mt-1">进行中</p>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between mb-4">
+              <div className="p-3 bg-gradient-to-r from-orange-500 to-amber-600 rounded-xl">
+                <TrendingUp className="w-8 h-8 text-white" />
               </div>
-              <div className="p-3 bg-purple-50 rounded-lg border border-purple-200">
-                <Target className="w-8 h-8 text-purple-400" />
-              </div>
+              <Badge className="bg-orange-100 text-orange-800 border-orange-300">实时数据</Badge>
             </div>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <div>
-              <p className="text-2xl font-bold text-purple-600">{metrics.projects.active}</p>
-              <div className="flex items-center mt-1">
-                <CheckCircle className="w-3 h-3 text-green-500 mr-1" />
-                <span className="text-sm text-green-600 font-medium">{metrics.projects.completed}个已完成</span>
+            <div className="space-y-2">
+              <h3 className="text-lg font-semibold text-slate-800 group-hover:translate-x-1 transition-transform duration-300">
+                财务状况
+              </h3>
+              <p className="text-3xl font-bold text-orange-600">¥8,924,156</p>
+              <div className="flex items-center gap-2 text-sm">
+                <ArrowUpRight className="w-4 h-4 text-green-500" />
+                <span className="text-green-600 font-medium">+15.2%</span>
+                <span className="text-slate-600">净利润</span>
               </div>
-            </div>
-            <div className="grid grid-cols-3 gap-2 text-xs">
-              <div className="text-center p-2 bg-green-50 rounded border border-green-200">
-                <p className="font-bold text-green-600">{metrics.projects.completed}</p>
-                <p className="text-slate-600">完成</p>
-              </div>
-              <div className="text-center p-2 bg-yellow-50 rounded border border-yellow-200">
-                <p className="font-bold text-yellow-600">{metrics.projects.inProgress}</p>
-                <p className="text-slate-600">进行</p>
-              </div>
-              <div className="text-center p-2 bg-red-50 rounded border border-red-200">
-                <p className="font-bold text-red-600">{metrics.projects.delayed}</p>
-                <p className="text-slate-600">延期</p>
+              <div className="mt-3">
+                <div className="flex justify-between text-sm text-slate-600 mb-1">
+                  <span>预算执行</span>
+                  <span>92%</span>
+                </div>
+                <div className="w-full bg-slate-200 rounded-full h-2">
+                  <div
+                    className="bg-gradient-to-r from-orange-400 via-orange-500 to-orange-600 h-2 rounded-full transition-all duration-500"
+                    style={{ width: "92%" }}
+                  ></div>
+                </div>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* 任务管理 */}
+        {/* 任务管理卡片 */}
         <Card
-          className="border-l-4 border-l-indigo-400 hover:shadow-lg transition-all duration-300 cursor-pointer"
-          onClick={() => router.push("/tasks")}
+          className="relative overflow-hidden bg-gradient-to-br from-purple-50 to-violet-50 border-l-4 border-l-purple-500 hover:shadow-lg transition-all duration-300 cursor-pointer group"
+          onClick={() => handleCardClick("/tasks")}
         >
-          <CardHeader className="pb-3">
-            <div className="flex items-center justify-between">
-              <div>
-                <CardTitle className="text-sm font-medium text-slate-600">任务管理</CardTitle>
-                <p className="text-xs text-slate-500 mt-1">今日任务</p>
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between mb-4">
+              <div className="p-3 bg-gradient-to-r from-purple-500 to-violet-600 rounded-xl">
+                <CheckCircle className="w-8 h-8 text-white" />
               </div>
-              <div className="p-3 bg-indigo-50 rounded-lg border border-indigo-200">
-                <CheckCircle className="w-8 h-8 text-indigo-400" />
-              </div>
+              <Badge className="bg-purple-100 text-purple-800 border-purple-300">进行中</Badge>
             </div>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <div>
-              <p className="text-2xl font-bold text-indigo-600">{metrics.tasks.total}</p>
-              <div className="flex items-center mt-1">
-                <Clock className="w-3 h-3 text-orange-500 mr-1" />
-                <span className="text-sm text-orange-600 font-medium">{metrics.tasks.pending}个待处理</span>
+            <div className="space-y-2">
+              <h3 className="text-lg font-semibold text-slate-800 group-hover:translate-x-1 transition-transform duration-300">
+                任务管理
+              </h3>
+              <p className="text-3xl font-bold text-purple-600">234</p>
+              <div className="flex items-center gap-2 text-sm">
+                <Clock className="w-4 h-4 text-blue-500" />
+                <span className="text-blue-600 font-medium">45</span>
+                <span className="text-slate-600">待处理</span>
               </div>
-            </div>
-            <div>
-              <div className="flex justify-between text-sm mb-1">
-                <span className="text-slate-600">完成进度</span>
-                <span className="font-medium">{metrics.tasks.completion}%</span>
-              </div>
-              <ColoredProgress
-                value={metrics.tasks.completion}
-                color="bg-gradient-to-r from-indigo-400 to-indigo-500"
-              />
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* 沟通协作 */}
-        <Card
-          className="border-l-4 border-l-teal-400 hover:shadow-lg transition-all duration-300 cursor-pointer"
-          onClick={() => router.push("/communication")}
-        >
-          <CardHeader className="pb-3">
-            <div className="flex items-center justify-between">
-              <div>
-                <CardTitle className="text-sm font-medium text-slate-600">沟通协作</CardTitle>
-                <p className="text-xs text-slate-500 mt-1">团队活跃</p>
-              </div>
-              <div className="p-3 bg-teal-50 rounded-lg border border-teal-200">
-                <MessageSquare className="w-8 h-8 text-teal-400" />
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <div>
-              <p className="text-2xl font-bold text-teal-600">{metrics.communication.active}</p>
-              <div className="flex items-center mt-1">
-                <TrendingUp className="w-3 h-3 text-green-500 mr-1" />
-                <span className="text-sm text-green-600 font-medium">+{metrics.communication.newMessages}条新消息</span>
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4 text-sm">
-              <div className="text-center p-2 bg-teal-50 rounded border border-teal-200">
-                <p className="text-lg font-bold text-teal-600">{metrics.communication.meetings}</p>
-                <p className="text-xs text-slate-600">会议</p>
-              </div>
-              <div className="text-center p-2 bg-blue-50 rounded border border-blue-200">
-                <p className="text-lg font-bold text-blue-600">{metrics.communication.messages}</p>
-                <p className="text-xs text-slate-600">消息</p>
+              <div className="mt-3">
+                <div className="flex justify-between text-sm text-slate-600 mb-1">
+                  <span>完成率</span>
+                  <span>76%</span>
+                </div>
+                <div className="w-full bg-slate-200 rounded-full h-2">
+                  <div
+                    className="bg-gradient-to-r from-purple-400 via-purple-500 to-purple-600 h-2 rounded-full transition-all duration-500"
+                    style={{ width: "76%" }}
+                  ></div>
+                </div>
               </div>
             </div>
           </CardContent>
         </Card>
+      </div>
 
+      {/* 快速操作区域 */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* 数据分析 */}
         <Card
-          className="border-l-4 border-l-pink-400 hover:shadow-lg transition-all duration-300 cursor-pointer"
-          onClick={() => router.push("/analytics")}
+          className="bg-gradient-to-br from-indigo-50 to-blue-50 border-l-4 border-l-indigo-500 hover:shadow-lg transition-all duration-300 cursor-pointer group"
+          onClick={() => handleCardClick("/analytics")}
         >
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
-              <div>
-                <CardTitle className="text-sm font-medium text-slate-600">数据分析</CardTitle>
-                <p className="text-xs text-slate-500 mt-1">AI智能</p>
+              <div className="p-3 bg-gradient-to-r from-indigo-500 to-blue-600 rounded-xl">
+                <BarChart3 className="w-6 h-6 text-white" />
               </div>
-              <div className="p-3 bg-pink-50 rounded-lg border border-pink-200">
-                <BarChart3 className="w-8 h-8 text-pink-400" />
-              </div>
+              <Badge className="bg-indigo-100 text-indigo-800 border-indigo-300">实时</Badge>
             </div>
           </CardHeader>
-          <CardContent className="space-y-3">
-            <div>
-              <p className="text-2xl font-bold text-pink-600">{metrics.analytics.accuracy}%</p>
-              <div className="flex items-center mt-1">
-                <TrendingUp className="w-3 h-3 text-green-500 mr-1" />
-                <span className="text-sm text-green-600 font-medium">数据准确率</span>
+          <CardContent>
+            <CardTitle className="text-lg mb-2 text-slate-800 group-hover:translate-x-1 transition-transform duration-300">
+              数据分析
+            </CardTitle>
+            <CardDescription className="text-slate-600 mb-4">深入了解业务数据和趋势</CardDescription>
+            <div className="space-y-3">
+              <div className="flex justify-between text-sm">
+                <span className="text-slate-600">今日访问量</span>
+                <span className="font-medium text-indigo-600">12,456</span>
               </div>
-            </div>
-            <div className="space-y-1 text-sm">
-              <div className="flex justify-between">
-                <span className="text-slate-600">报表生成</span>
-                <span className="font-medium text-pink-600">{metrics.analytics.reports}份</span>
+              <div className="flex justify-between text-sm">
+                <span className="text-slate-600">转化率</span>
+                <span className="font-medium text-indigo-600">8.5%</span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-slate-600">数据源</span>
-                <span className="font-medium text-blue-600">{metrics.analytics.sources}个</span>
+              <div className="mt-3">
+                <div className="flex justify-between text-sm text-slate-600 mb-1">
+                  <span>数据完整性</span>
+                  <span>94%</span>
+                </div>
+                <div className="w-full bg-slate-200 rounded-full h-2">
+                  <div
+                    className="bg-gradient-to-r from-indigo-400 via-indigo-500 to-indigo-600 h-2 rounded-full transition-all duration-500"
+                    style={{ width: "94%" }}
+                  ></div>
+                </div>
               </div>
             </div>
           </CardContent>
@@ -470,112 +268,156 @@ export function DashboardContent() {
 
         {/* OKR管理 */}
         <Card
-          className="border-l-4 border-l-cyan-400 hover:shadow-lg transition-all duration-300 cursor-pointer"
-          onClick={() => router.push("/okr")}
+          className="bg-gradient-to-br from-cyan-50 to-teal-50 border-l-4 border-l-cyan-500 hover:shadow-lg transition-all duration-300 cursor-pointer group"
+          onClick={() => handleCardClick("/okr")}
         >
           <CardHeader className="pb-3">
             <div className="flex items-center justify-between">
-              <div>
-                <CardTitle className="text-sm font-medium text-slate-600">OKR管理</CardTitle>
-                <p className="text-xs text-slate-500 mt-1">季度目标</p>
+              <div className="p-3 bg-gradient-to-r from-cyan-500 to-teal-600 rounded-xl">
+                <Target className="w-6 h-6 text-white" />
               </div>
-              <div className="p-3 bg-cyan-50 rounded-lg border border-cyan-200">
-                <Trophy className="w-8 h-8 text-cyan-400" />
-              </div>
+              <Badge className="bg-cyan-100 text-cyan-800 border-cyan-300">季度</Badge>
             </div>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <div>
-              <p className="text-2xl font-bold text-cyan-600">{metrics.okr.achievement}%</p>
-              <div className="flex items-center mt-1">
-                <CheckCircle className="w-3 h-3 text-green-500 mr-1" />
-                <span className="text-sm text-green-600 font-medium">目标达成率</span>
-              </div>
-            </div>
-            <div>
-              <ColoredProgress value={metrics.okr.achievement} color="bg-gradient-to-r from-cyan-400 to-cyan-500" />
-              <div className="grid grid-cols-2 gap-4 text-sm mt-2">
-                <div className="text-center p-2 bg-green-50 rounded border border-green-200">
-                  <p className="text-lg font-bold text-green-600">{metrics.okr.completed}</p>
-                  <p className="text-xs text-slate-600">已达成</p>
-                </div>
-                <div className="text-center p-2 bg-yellow-50 rounded border border-yellow-200">
-                  <p className="text-lg font-bold text-yellow-600">{metrics.okr.inProgress}</p>
-                  <p className="text-xs text-slate-600">进行中</p>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* 底部分析区域 */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* 业务趋势分析 */}
-        <Card className="border-t-4 border-t-blue-400">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <BarChart3 className="w-5 h-5 text-blue-600" />
-              业务趋势分析
-            </CardTitle>
-            <CardDescription>关键业务指标变化趋势</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="text-center py-8">
-              <BarChart3 className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-600">业务趋势图表</p>
-              <Button onClick={() => router.push("/analytics")} className={`${buttonStyles.outline} mt-4`}>
-                查看详细分析
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* 今日待办 */}
-        <Card className="border-t-4 border-t-orange-400">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <AlertCircle className="w-5 h-5 text-orange-600" />
-              今日待办
+            <CardTitle className="text-lg mb-2 text-slate-800 group-hover:translate-x-1 transition-transform duration-300">
+              OKR管理
             </CardTitle>
-            <CardDescription>需要处理的重要事项</CardDescription>
-          </CardHeader>
-          <CardContent>
+            <CardDescription className="text-slate-600 mb-4">目标与关键结果跟踪</CardDescription>
             <div className="space-y-3">
-              <div
-                className="flex items-center justify-between p-3 bg-orange-50 rounded-lg border border-orange-200 cursor-pointer hover:shadow-md transition-all"
-                onClick={() => router.push("/approval")}
-              >
-                <div className="flex items-center gap-3">
-                  <AlertCircle className="w-4 h-4 text-orange-500" />
-                  <span className="text-sm font-medium">审批待处理文档</span>
-                </div>
-                <Badge className="bg-orange-100 text-orange-800 border-orange-300">紧急</Badge>
+              <div className="flex justify-between text-sm">
+                <span className="text-slate-600">本季度目标</span>
+                <span className="font-medium text-cyan-600">8/10</span>
               </div>
-              <div
-                className="flex items-center justify-between p-3 bg-blue-50 rounded-lg border border-blue-200 cursor-pointer hover:shadow-md transition-all"
-                onClick={() => router.push("/schedule")}
-              >
-                <div className="flex items-center gap-3">
-                  <Calendar className="w-4 h-4 text-blue-500" />
-                  <span className="text-sm font-medium">团队周会安排</span>
-                </div>
-                <Badge className="bg-blue-100 text-blue-800 border-blue-300">今日</Badge>
+              <div className="flex justify-between text-sm">
+                <span className="text-slate-600">关键结果</span>
+                <span className="font-medium text-cyan-600">15/18</span>
               </div>
-              <div
-                className="flex items-center justify-between p-3 bg-green-50 rounded-lg border border-green-200 cursor-pointer hover:shadow-md transition-all"
-                onClick={() => router.push("/analytics")}
-              >
-                <div className="flex items-center gap-3">
-                  <CheckCircle className="w-4 h-4 text-green-500" />
-                  <span className="text-sm font-medium">月度报告提交</span>
+              <div className="mt-3">
+                <div className="flex justify-between text-sm text-slate-600 mb-1">
+                  <span>完成进度</span>
+                  <span>83%</span>
                 </div>
-                <Badge className="bg-green-100 text-green-800 border-green-300">明日</Badge>
+                <div className="w-full bg-slate-200 rounded-full h-2">
+                  <div
+                    className="bg-gradient-to-r from-cyan-400 via-cyan-500 to-cyan-600 h-2 rounded-full transition-all duration-500"
+                    style={{ width: "83%" }}
+                  ></div>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* 系统状态 */}
+        <Card
+          className="bg-gradient-to-br from-pink-50 to-rose-50 border-l-4 border-l-pink-500 hover:shadow-lg transition-all duration-300 cursor-pointer group"
+          onClick={() => handleCardClick("/system-monitor")}
+        >
+          <CardHeader className="pb-3">
+            <div className="flex items-center justify-between">
+              <div className="p-3 bg-gradient-to-r from-pink-500 to-rose-600 rounded-xl">
+                <Activity className="w-6 h-6 text-white" />
+              </div>
+              <Badge className="bg-green-100 text-green-800 border-green-300">正常</Badge>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <CardTitle className="text-lg mb-2 text-slate-800 group-hover:translate-x-1 transition-transform duration-300">
+              系统状态
+            </CardTitle>
+            <CardDescription className="text-slate-600 mb-4">实时系统监控和性能</CardDescription>
+            <div className="space-y-3">
+              <div className="flex justify-between text-sm">
+                <span className="text-slate-600">CPU使用率</span>
+                <span className="font-medium text-pink-600">45%</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-slate-600">内存使用</span>
+                <span className="font-medium text-pink-600">67%</span>
+              </div>
+              <div className="mt-3">
+                <div className="flex justify-between text-sm text-slate-600 mb-1">
+                  <span>系统健康度</span>
+                  <span>98%</span>
+                </div>
+                <div className="w-full bg-slate-200 rounded-full h-2">
+                  <div
+                    className="bg-gradient-to-r from-pink-400 via-pink-500 to-pink-600 h-2 rounded-full transition-all duration-500"
+                    style={{ width: "98%" }}
+                  ></div>
+                </div>
               </div>
             </div>
           </CardContent>
         </Card>
       </div>
+
+      {/* 最近活动 */}
+      <Card className="bg-white border border-slate-200 shadow-sm">
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-lg text-slate-800">最近活动</CardTitle>
+            <Button variant="outline" size="sm" onClick={() => handleCardClick("/notifications")}>
+              <Eye className="w-4 h-4 mr-2" />
+              查看全部
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {[
+              {
+                title: "新客户注册",
+                description: "张三完成了账户注册",
+                time: "5分钟前",
+                type: "success",
+                icon: Users,
+              },
+              {
+                title: "订单完成",
+                description: "订单 #12345 已完成支付",
+                time: "15分钟前",
+                type: "info",
+                icon: ShoppingCart,
+              },
+              {
+                title: "系统更新",
+                description: "系统已更新到最新版本",
+                time: "1小时前",
+                type: "warning",
+                icon: RefreshCw,
+              },
+              {
+                title: "数据备份",
+                description: "每日数据备份已完成",
+                time: "2小时前",
+                type: "success",
+                icon: CheckCircle,
+              },
+            ].map((activity, index) => (
+              <div key={index} className="flex items-center gap-4 p-3 rounded-lg hover:bg-slate-50 transition-colors">
+                <div
+                  className={`p-2 rounded-lg ${
+                    activity.type === "success"
+                      ? "bg-green-100 text-green-600"
+                      : activity.type === "warning"
+                        ? "bg-yellow-100 text-yellow-600"
+                        : "bg-blue-100 text-blue-600"
+                  }`}
+                >
+                  <activity.icon className="w-4 h-4" />
+                </div>
+                <div className="flex-1">
+                  <h4 className="font-medium text-slate-800">{activity.title}</h4>
+                  <p className="text-sm text-slate-600">{activity.description}</p>
+                </div>
+                <span className="text-xs text-slate-500">{activity.time}</span>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
     </div>
   )
 }

@@ -65,7 +65,7 @@ const navigationAnalysis = {
       icon: "DollarSign",
       status: "开发中",
       completeness: 60,
-      features: ["基础框架", "数据展示"],
+      features: ["基础框架", "数��展示"],
       issues: ["核心功能未实现", "报表功能缺失"],
       priority: "中",
     },

@@ -1,4 +1,4 @@
-// 企业管理系统设计系统配置
+// 企业管理系统设计系统配置 - 统一版本
 export const colors = {
   primary: {
     50: "#f0f9ff",
@@ -93,12 +93,7 @@ export const commonStyles = {
     pageHeader: "flex items-center justify-between mb-6",
     pageTitle: "text-2xl font-bold text-slate-900",
     pageDescription: "text-slate-600 mt-1",
-    grid: {
-      cols1: "grid grid-cols-1 gap-6",
-      cols2: "grid grid-cols-1 md:grid-cols-2 gap-6",
-      cols3: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6",
-      cols4: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6",
-    },
+    grid: "grid gap-6",
   },
   card: {
     base: "bg-white/80 backdrop-blur-sm border border-sky-200 rounded-xl shadow-sm hover:shadow-md transition-all duration-200",
@@ -128,7 +123,7 @@ export const commonStyles = {
     success: "bg-emerald-100 text-emerald-800 border-emerald-200",
     warning: "bg-amber-100 text-amber-800 border-amber-200",
     error: "bg-red-100 text-red-800 border-red-200",
-    gray: "bg-slate-100 text-slate-800 border-slate-200",
+    secondary: "bg-slate-100 text-slate-800 border-slate-200",
   },
   text: {
     title: "text-2xl font-bold text-slate-900",
@@ -146,7 +141,7 @@ export const commonStyles = {
   },
 }
 
-// 进度条颜色配置
+// 进度条颜色配置 - 统一使用彩色渐变
 export const getProgressColor = (progress: number, status?: string): string => {
   if (status === "completed") return "bg-gradient-to-r from-emerald-400 to-emerald-500"
   if (status === "cancelled") return "bg-gradient-to-r from-red-400 to-red-500"
@@ -158,6 +153,7 @@ export const getProgressColor = (progress: number, status?: string): string => {
   if (status === "off-track") return "bg-gradient-to-r from-red-400 to-red-500"
   if (status === "on-track") return "bg-gradient-to-r from-emerald-400 to-emerald-500"
 
+  // 根据进度值返回彩色渐变
   if (progress >= 90) return "bg-gradient-to-r from-emerald-400 to-emerald-500"
   if (progress >= 70) return "bg-gradient-to-r from-sky-400 to-sky-500"
   if (progress >= 50) return "bg-gradient-to-r from-amber-400 to-amber-500"

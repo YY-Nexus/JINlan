@@ -1,464 +1,604 @@
 "use client"
 
-import { useState } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { useRouter } from "next/navigation"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { toast } from "@/hooks/use-toast"
 import {
-  Activity,
   Server,
   Database,
   Wifi,
+  Shield,
+  Activity,
+  AlertTriangle,
+  CheckCircle,
+  XCircle,
+  RefreshCw,
+  Zap,
   HardDrive,
   Cpu,
   MemoryStick,
-  Shield,
-  CheckCircle,
-  RefreshCw,
-  Settings,
-  TrendingUp,
-  TrendingDown,
-  Zap,
-  Globe,
-  Monitor,
+  Network,
   Clock,
+  TrendingUp,
+  AlertCircle,
+  Settings,
+  Download,
+  Share,
+  Filter,
 } from "lucide-react"
+
+interface SystemMetrics {
+  cpuUsage: number
+  memoryUsage: number
+  diskUsage: number
+  networkLoad: number
+  uptime: string
+  activeConnections: number
+  responseTime: number
+  errorRate: number
+}
+
+interface SystemService {
+  name: string
+  status: "running" | "stopped" | "warning"
+  uptime: string
+  lastCheck: string
+}
 
 export function SystemStatusMonitor() {
   const router = useRouter()
+  const [lastUpdate, setLastUpdate] = useState(new Date())
   const [isRefreshing, setIsRefreshing] = useState(false)
-  const [systemData, setSystemData] = useState({
-    cpu: 45,
-    memory: 67,
-    disk: 34,
-    network: 89,
-    database: 92,
-    security: 98,
+  const [metrics, setMetrics] = useState<SystemMetrics>({
+    cpuUsage: 45,
+    memoryUsage: 62,
+    diskUsage: 78,
+    networkLoad: 23,
+    uptime: "15天 8小时 32分钟",
+    activeConnections: 1247,
+    responseTime: 145,
+    errorRate: 0.02,
   })
+  const [services, setServices] = useState<SystemService[]>([
+    { name: "Web服务器", status: "running", uptime: "15天", lastCheck: "刚刚" },
+    { name: "数据库", status: "running", uptime: "15天", lastCheck: "1分钟前" },
+    { name: "缓存服务", status: "running", uptime: "12天", lastCheck: "刚刚" },
+    { name: "消息队列", status: "warning", uptime: "8小时", lastCheck: "2分钟前" },
+    { name: "文件存储", status: "running", uptime: "15天", lastCheck: "刚刚" },
+    { name: "监控服务", status: "running", uptime: "10天", lastCheck: "30秒前" },
+  ])
+
+  // 模拟实时数据更新
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setMetrics((prev) => ({
+        ...prev,
+        cpuUsage: Math.max(20, Math.min(90, prev.cpuUsage + Math.floor(Math.random() * 10) - 5)),
+        memoryUsage: Math.max(30, Math.min(85, prev.memoryUsage + Math.floor(Math.random() * 6) - 3)),
+        networkLoad: Math.max(10, Math.min(80, prev.networkLoad + Math.floor(Math.random() * 8) - 4)),
+        activeConnections: prev.activeConnections + Math.floor(Math.random() * 20) - 10,
+        responseTime: Math.max(80, Math.min(300, prev.responseTime + Math.floor(Math.random() * 20) - 10)),
+      }))
+      setLastUpdate(new Date())
+    }, 3000)
+
+    return () => clearInterval(interval)
+  }, [])
 
   const handleRefresh = async () => {
     setIsRefreshing(true)
-    // 模拟数据刷新
-    await new Promise((resolve) => setTimeout(resolve, 2000))
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 1500))
+      toast({
+        title: "系统状态已刷新",
+        description: "所有监控数据已更新到最新状态",
+      })
+    } catch (error) {
+      toast({
+        title: "刷新失败",
+        description: "无法获取最新系统状态",
+        variant: "destructive",
+      })
+    } finally {
+      setIsRefreshing(false)
+    }
+  }
 
-    // 模拟数据变化
-    setSystemData({
-      cpu: Math.floor(Math.random() * 100),
-      memory: Math.floor(Math.random() * 100),
-      disk: Math.floor(Math.random() * 100),
-      network: Math.floor(Math.random() * 100),
-      database: Math.floor(Math.random() * 100),
-      security: Math.floor(Math.random() * 100),
+  const handleOptimize = () => {
+    toast({
+      title: "系统优化已启动",
+      description: "正在清理缓存和优化性能...",
     })
-
-    setIsRefreshing(false)
+    router.push("/performance-optimization")
   }
 
-  const handleCardClick = (path: string) => {
-    router.push(path)
+  const handleSecurityScan = () => {
+    toast({
+      title: "安全扫描已开始",
+      description: "正在检查系统安全状态...",
+    })
+    router.push("/security")
   }
 
-  const getStatusColor = (value: number) => {
-    if (value >= 80) return "text-green-600"
-    if (value >= 60) return "text-yellow-600"
-    return "text-red-600"
+  const handleExport = () => {
+    toast({
+      title: "导出成功",
+      description: "系统监控报告已生成并开始下载",
+    })
   }
 
-  const getStatusBadge = (value: number) => {
-    if (value >= 80) return { variant: "default" as const, text: "正常", color: "bg-green-100 text-green-800" }
-    if (value >= 60) return { variant: "secondary" as const, text: "警告", color: "bg-yellow-100 text-yellow-800" }
-    return { variant: "destructive" as const, text: "异常", color: "bg-red-100 text-red-800" }
+  const handleShare = () => {
+    toast({
+      title: "分享成功",
+      description: "系统状态数据已生成分享链接",
+    })
+  }
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "running":
+        return "text-green-600 bg-green-100"
+      case "warning":
+        return "text-yellow-600 bg-yellow-100"
+      case "stopped":
+        return "text-red-600 bg-red-100"
+      default:
+        return "text-gray-600 bg-gray-100"
+    }
+  }
+
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case "running":
+        return CheckCircle
+      case "warning":
+        return AlertTriangle
+      case "stopped":
+        return XCircle
+      default:
+        return AlertCircle
+    }
+  }
+
+  const getMetricColor = (value: number, type: string) => {
+    if (type === "error" && value > 0.05) return "text-red-600"
+    if (type === "response" && value > 200) return "text-yellow-600"
+    if (value > 80) return "text-red-600"
+    if (value > 60) return "text-yellow-600"
+    return "text-green-600"
+  }
+
+  // 统一的彩色进度条组件
+  const ColoredProgress = ({ value, color }: { value: number; color: string }) => {
+    return (
+      <div className="w-full bg-slate-200 rounded-full h-2">
+        <div
+          className={`h-2 rounded-full transition-all duration-1000 ease-out ${color}`}
+          style={{ width: `${Math.min(100, Math.max(0, value))}%` }}
+        />
+      </div>
+    )
+  }
+
+  // 统一的按钮样式
+  const buttonStyles = {
+    primary:
+      "bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 text-white shadow-md hover:shadow-lg transition-all duration-200",
+    outline:
+      "border border-sky-200 text-sky-700 hover:bg-sky-50 hover:border-sky-300 bg-white shadow-sm hover:shadow-md transition-all duration-200",
   }
 
   return (
-    <div className="space-y-6">
-      {/* 页面标题和操作按钮 */}
+    <div className="p-6 space-y-6">
+      {/* 页面标题和操作 */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-slate-800">系统监控</h1>
-          <p className="text-slate-600 mt-1">实时监控系统性能和运行状态</p>
+          <h1 className="text-2xl font-bold text-slate-900">系统监控</h1>
+          <p className="text-slate-600 mt-1">实时监控系统运行状态和性能指标</p>
         </div>
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            onClick={handleRefresh}
-            disabled={isRefreshing}
-            className="flex items-center gap-2 bg-transparent"
-          >
-            <RefreshCw className={`w-4 h-4 ${isRefreshing ? "animate-spin" : ""}`} />
-            刷新数据
+        <div className="flex items-center text-sm text-slate-500">
+          <Clock className="w-4 h-4 mr-1" />
+          最后更新: {lastUpdate.toLocaleTimeString()}
+        </div>
+      </div>
+
+      {/* 顶部操作栏 */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center space-x-4">
+          <Button onClick={handleRefresh} disabled={isRefreshing} className={buttonStyles.outline}>
+            <RefreshCw className={`w-4 h-4 mr-2 ${isRefreshing ? "animate-spin" : ""}`} />
+            刷新状态
           </Button>
-          <Button
-            onClick={() => handleCardClick("/settings")}
-            className="bg-sky-600 hover:bg-sky-700 flex items-center gap-2"
-          >
-            <Settings className="w-4 h-4" />
-            系统设置
+          <Button onClick={handleExport} className={buttonStyles.outline}>
+            <Download className="w-4 h-4 mr-2" />
+            导出报告
+          </Button>
+          <Button onClick={handleShare} className={buttonStyles.outline}>
+            <Share className="w-4 h-4 mr-2" />
+            分享数据
+          </Button>
+        </div>
+        <div className="flex items-center space-x-2">
+          <Button size="sm" className={buttonStyles.outline}>
+            <Filter className="w-4 h-4 mr-1" />
+            筛选
+          </Button>
+          <Button size="sm" onClick={() => router.push("/settings")} className={buttonStyles.outline}>
+            <Settings className="w-4 h-4 mr-1" />
+            设置
+          </Button>
+          <Button size="sm" onClick={handleOptimize} className={buttonStyles.outline}>
+            <Zap className="w-4 h-4 mr-1" />
+            系统优化
+          </Button>
+          <Button size="sm" onClick={handleSecurityScan} className={buttonStyles.outline}>
+            <Shield className="w-4 h-4 mr-1" />
+            安全扫描
           </Button>
         </div>
       </div>
 
-      {/* 系统状态概览 */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {/* CPU使用率 */}
+      {/* 系统概览指标 */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <Card
-          className="relative overflow-hidden bg-gradient-to-br from-blue-50 to-sky-50 border-l-4 border-l-blue-500 hover:shadow-lg transition-all duration-300 cursor-pointer group"
-          onClick={() => handleCardClick("/performance")}
+          className="border-l-4 border-l-blue-400 hover:shadow-lg transition-all duration-300 cursor-pointer"
+          onClick={() => router.push("/performance-optimization")}
         >
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between mb-4">
-              <div className="p-3 bg-gradient-to-r from-blue-500 to-sky-600 rounded-xl">
-                <Cpu className="w-8 h-8 text-white" />
-              </div>
-              <Badge className={getStatusBadge(systemData.cpu).color}>{getStatusBadge(systemData.cpu).text}</Badge>
-            </div>
-            <div className="space-y-2">
-              <h3 className="text-lg font-semibold text-slate-800 group-hover:translate-x-1 transition-transform duration-300">
-                CPU使用率
-              </h3>
-              <p className={`text-3xl font-bold ${getStatusColor(systemData.cpu)}`}>{systemData.cpu}%</p>
-              <div className="flex items-center gap-2 text-sm">
-                {systemData.cpu >= 80 ? (
-                  <TrendingUp className="w-4 h-4 text-red-500" />
-                ) : (
-                  <TrendingDown className="w-4 h-4 text-green-500" />
-                )}
-                <span className={systemData.cpu >= 80 ? "text-red-600" : "text-green-600"}>
-                  {systemData.cpu >= 80 ? "高负载" : "正常"}
-                </span>
-              </div>
-              <div className="mt-3">
-                <div className="flex justify-between text-sm text-slate-600 mb-1">
-                  <span>使用率</span>
-                  <span>{systemData.cpu}%</span>
-                </div>
-                <div className="w-full bg-slate-200 rounded-full h-2">
-                  <div
-                    className="bg-gradient-to-r from-blue-400 via-blue-500 to-blue-600 h-2 rounded-full transition-all duration-500"
-                    style={{ width: `${systemData.cpu}%` }}
-                  ></div>
-                </div>
-              </div>
-            </div>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">CPU使用率</CardTitle>
+            <Cpu className="h-4 w-4 text-blue-600" />
+          </CardHeader>
+          <CardContent>
+            <div className={`text-2xl font-bold ${getMetricColor(metrics.cpuUsage, "cpu")}`}>{metrics.cpuUsage}%</div>
+            <ColoredProgress
+              value={metrics.cpuUsage}
+              color={
+                metrics.cpuUsage > 80
+                  ? "bg-gradient-to-r from-red-400 to-red-500"
+                  : metrics.cpuUsage > 60
+                    ? "bg-gradient-to-r from-yellow-400 to-yellow-500"
+                    : "bg-gradient-to-r from-blue-400 to-blue-500"
+              }
+            />
+            <p className="text-xs text-gray-500 mt-1">8核心处理器</p>
           </CardContent>
         </Card>
 
-        {/* 内存使用 */}
         <Card
-          className="relative overflow-hidden bg-gradient-to-br from-green-50 to-emerald-50 border-l-4 border-l-green-500 hover:shadow-lg transition-all duration-300 cursor-pointer group"
-          onClick={() => handleCardClick("/performance")}
+          className="border-l-4 border-l-green-400 hover:shadow-lg transition-all duration-300 cursor-pointer"
+          onClick={() => router.push("/performance-optimization")}
         >
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between mb-4">
-              <div className="p-3 bg-gradient-to-r from-green-500 to-emerald-600 rounded-xl">
-                <MemoryStick className="w-8 h-8 text-white" />
-              </div>
-              <Badge className={getStatusBadge(systemData.memory).color}>
-                {getStatusBadge(systemData.memory).text}
-              </Badge>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">内存使用率</CardTitle>
+            <MemoryStick className="h-4 w-4 text-green-600" />
+          </CardHeader>
+          <CardContent>
+            <div className={`text-2xl font-bold ${getMetricColor(metrics.memoryUsage, "memory")}`}>
+              {metrics.memoryUsage}%
             </div>
-            <div className="space-y-2">
-              <h3 className="text-lg font-semibold text-slate-800 group-hover:translate-x-1 transition-transform duration-300">
-                内存使用
-              </h3>
-              <p className={`text-3xl font-bold ${getStatusColor(systemData.memory)}`}>{systemData.memory}%</p>
-              <div className="flex items-center gap-2 text-sm">
-                <MemoryStick className="w-4 h-4 text-green-500" />
-                <span className="text-green-600">8GB / 16GB</span>
-              </div>
-              <div className="mt-3">
-                <div className="flex justify-between text-sm text-slate-600 mb-1">
-                  <span>使用率</span>
-                  <span>{systemData.memory}%</span>
-                </div>
-                <div className="w-full bg-slate-200 rounded-full h-2">
-                  <div
-                    className="bg-gradient-to-r from-green-400 via-green-500 to-green-600 h-2 rounded-full transition-all duration-500"
-                    style={{ width: `${systemData.memory}%` }}
-                  ></div>
-                </div>
-              </div>
-            </div>
+            <ColoredProgress
+              value={metrics.memoryUsage}
+              color={
+                metrics.memoryUsage > 80
+                  ? "bg-gradient-to-r from-red-400 to-red-500"
+                  : metrics.memoryUsage > 60
+                    ? "bg-gradient-to-r from-yellow-400 to-yellow-500"
+                    : "bg-gradient-to-r from-green-400 to-green-500"
+              }
+            />
+            <p className="text-xs text-gray-500 mt-1">16GB 总内存</p>
           </CardContent>
         </Card>
 
-        {/* 磁盘空间 */}
         <Card
-          className="relative overflow-hidden bg-gradient-to-br from-orange-50 to-amber-50 border-l-4 border-l-orange-500 hover:shadow-lg transition-all duration-300 cursor-pointer group"
-          onClick={() => handleCardClick("/performance")}
+          className="border-l-4 border-l-orange-400 hover:shadow-lg transition-all duration-300 cursor-pointer"
+          onClick={() => router.push("/data-integration")}
         >
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between mb-4">
-              <div className="p-3 bg-gradient-to-r from-orange-500 to-amber-600 rounded-xl">
-                <HardDrive className="w-8 h-8 text-white" />
-              </div>
-              <Badge className={getStatusBadge(systemData.disk).color}>{getStatusBadge(systemData.disk).text}</Badge>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">磁盘使用率</CardTitle>
+            <HardDrive className="h-4 w-4 text-orange-600" />
+          </CardHeader>
+          <CardContent>
+            <div className={`text-2xl font-bold ${getMetricColor(metrics.diskUsage, "disk")}`}>
+              {metrics.diskUsage}%
             </div>
-            <div className="space-y-2">
-              <h3 className="text-lg font-semibold text-slate-800 group-hover:translate-x-1 transition-transform duration-300">
-                磁盘空间
-              </h3>
-              <p className={`text-3xl font-bold ${getStatusColor(systemData.disk)}`}>{systemData.disk}%</p>
-              <div className="flex items-center gap-2 text-sm">
-                <HardDrive className="w-4 h-4 text-orange-500" />
-                <span className="text-orange-600">340GB / 1TB</span>
-              </div>
-              <div className="mt-3">
-                <div className="flex justify-between text-sm text-slate-600 mb-1">
-                  <span>使用率</span>
-                  <span>{systemData.disk}%</span>
-                </div>
-                <div className="w-full bg-slate-200 rounded-full h-2">
-                  <div
-                    className="bg-gradient-to-r from-orange-400 via-orange-500 to-orange-600 h-2 rounded-full transition-all duration-500"
-                    style={{ width: `${systemData.disk}%` }}
-                  ></div>
-                </div>
-              </div>
-            </div>
+            <ColoredProgress
+              value={metrics.diskUsage}
+              color={
+                metrics.diskUsage > 80
+                  ? "bg-gradient-to-r from-red-400 to-red-500"
+                  : metrics.diskUsage > 60
+                    ? "bg-gradient-to-r from-yellow-400 to-yellow-500"
+                    : "bg-gradient-to-r from-orange-400 to-orange-500"
+              }
+            />
+            <p className="text-xs text-gray-500 mt-1">500GB SSD</p>
           </CardContent>
         </Card>
 
-        {/* 网络状态 */}
         <Card
-          className="relative overflow-hidden bg-gradient-to-br from-purple-50 to-violet-50 border-l-4 border-l-purple-500 hover:shadow-lg transition-all duration-300 cursor-pointer group"
-          onClick={() => handleCardClick("/performance")}
+          className="border-l-4 border-l-purple-400 hover:shadow-lg transition-all duration-300 cursor-pointer"
+          onClick={() => router.push("/system-testing")}
         >
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between mb-4">
-              <div className="p-3 bg-gradient-to-r from-purple-500 to-violet-600 rounded-xl">
-                <Wifi className="w-8 h-8 text-white" />
-              </div>
-              <Badge className={getStatusBadge(systemData.network).color}>
-                {getStatusBadge(systemData.network).text}
-              </Badge>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">网络负载</CardTitle>
+            <Network className="h-4 w-4 text-purple-600" />
+          </CardHeader>
+          <CardContent>
+            <div className={`text-2xl font-bold ${getMetricColor(metrics.networkLoad, "network")}`}>
+              {metrics.networkLoad}%
             </div>
-            <div className="space-y-2">
-              <h3 className="text-lg font-semibold text-slate-800 group-hover:translate-x-1 transition-transform duration-300">
-                网络状态
-              </h3>
-              <p className={`text-3xl font-bold ${getStatusColor(systemData.network)}`}>{systemData.network}%</p>
-              <div className="flex items-center gap-2 text-sm">
-                <Globe className="w-4 h-4 text-purple-500" />
-                <span className="text-purple-600">连接正常</span>
-              </div>
-              <div className="mt-3">
-                <div className="flex justify-between text-sm text-slate-600 mb-1">
-                  <span>连接质量</span>
-                  <span>{systemData.network}%</span>
-                </div>
-                <div className="w-full bg-slate-200 rounded-full h-2">
-                  <div
-                    className="bg-gradient-to-r from-purple-400 via-purple-500 to-purple-600 h-2 rounded-full transition-all duration-500"
-                    style={{ width: `${systemData.network}%` }}
-                  ></div>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* 数据库状态 */}
-        <Card
-          className="relative overflow-hidden bg-gradient-to-br from-indigo-50 to-blue-50 border-l-4 border-l-indigo-500 hover:shadow-lg transition-all duration-300 cursor-pointer group"
-          onClick={() => handleCardClick("/data-integration")}
-        >
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between mb-4">
-              <div className="p-3 bg-gradient-to-r from-indigo-500 to-blue-600 rounded-xl">
-                <Database className="w-8 h-8 text-white" />
-              </div>
-              <Badge className={getStatusBadge(systemData.database).color}>
-                {getStatusBadge(systemData.database).text}
-              </Badge>
-            </div>
-            <div className="space-y-2">
-              <h3 className="text-lg font-semibold text-slate-800 group-hover:translate-x-1 transition-transform duration-300">
-                数据库状态
-              </h3>
-              <p className={`text-3xl font-bold ${getStatusColor(systemData.database)}`}>{systemData.database}%</p>
-              <div className="flex items-center gap-2 text-sm">
-                <Activity className="w-4 h-4 text-indigo-500" />
-                <span className="text-indigo-600">运行正常</span>
-              </div>
-              <div className="mt-3">
-                <div className="flex justify-between text-sm text-slate-600 mb-1">
-                  <span>健康度</span>
-                  <span>{systemData.database}%</span>
-                </div>
-                <div className="w-full bg-slate-200 rounded-full h-2">
-                  <div
-                    className="bg-gradient-to-r from-indigo-400 via-indigo-500 to-indigo-600 h-2 rounded-full transition-all duration-500"
-                    style={{ width: `${systemData.database}%` }}
-                  ></div>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* 安全状态 */}
-        <Card
-          className="relative overflow-hidden bg-gradient-to-br from-cyan-50 to-teal-50 border-l-4 border-l-cyan-500 hover:shadow-lg transition-all duration-300 cursor-pointer group"
-          onClick={() => handleCardClick("/security")}
-        >
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between mb-4">
-              <div className="p-3 bg-gradient-to-r from-cyan-500 to-teal-600 rounded-xl">
-                <Shield className="w-8 h-8 text-white" />
-              </div>
-              <Badge className={getStatusBadge(systemData.security).color}>
-                {getStatusBadge(systemData.security).text}
-              </Badge>
-            </div>
-            <div className="space-y-2">
-              <h3 className="text-lg font-semibold text-slate-800 group-hover:translate-x-1 transition-transform duration-300">
-                安全状态
-              </h3>
-              <p className={`text-3xl font-bold ${getStatusColor(systemData.security)}`}>{systemData.security}%</p>
-              <div className="flex items-center gap-2 text-sm">
-                <CheckCircle className="w-4 h-4 text-cyan-500" />
-                <span className="text-cyan-600">防护正常</span>
-              </div>
-              <div className="mt-3">
-                <div className="flex justify-between text-sm text-slate-600 mb-1">
-                  <span>安全等级</span>
-                  <span>{systemData.security}%</span>
-                </div>
-                <div className="w-full bg-slate-200 rounded-full h-2">
-                  <div
-                    className="bg-gradient-to-r from-cyan-400 via-cyan-500 to-cyan-600 h-2 rounded-full transition-all duration-500"
-                    style={{ width: `${systemData.security}%` }}
-                  ></div>
-                </div>
-              </div>
-            </div>
+            <ColoredProgress
+              value={metrics.networkLoad}
+              color={
+                metrics.networkLoad > 80
+                  ? "bg-gradient-to-r from-red-400 to-red-500"
+                  : metrics.networkLoad > 60
+                    ? "bg-gradient-to-r from-yellow-400 to-yellow-500"
+                    : "bg-gradient-to-r from-purple-400 to-purple-500"
+              }
+            />
+            <p className="text-xs text-gray-500 mt-1">平均延迟: {metrics.responseTime}ms</p>
           </CardContent>
         </Card>
       </div>
 
-      {/* 系统服务状态 */}
-      <Card className="bg-white border border-slate-200 shadow-sm">
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-lg text-slate-800">系统服务状态</CardTitle>
-            <Button variant="outline" size="sm" onClick={() => handleCardClick("/system-management")}>
-              <Monitor className="w-4 h-4 mr-2" />
-              管理服务
-            </Button>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {[
-              { name: "Web服务器", status: "running", uptime: "99.9%", icon: Server },
-              { name: "数据库服务", status: "running", uptime: "99.8%", icon: Database },
-              { name: "缓存服务", status: "running", uptime: "99.7%", icon: Zap },
-              { name: "文件服务", status: "running", uptime: "99.9%", icon: HardDrive },
-              { name: "邮件服务", status: "warning", uptime: "98.5%", icon: Globe },
-              { name: "备份服务", status: "running", uptime: "99.6%", icon: Shield },
-            ].map((service, index) => (
-              <div key={index} className="flex items-center justify-between p-3 border border-slate-200 rounded-lg">
-                <div className="flex items-center gap-3">
+      {/* 详细监控信息 */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* 系统服务状态 */}
+        <Card className="border-t-4 border-t-blue-400">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Server className="w-5 h-5 text-blue-600" />
+              系统服务状态
+            </CardTitle>
+            <CardDescription>各项系统服务运行状态监控</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {services.map((service, index) => {
+                const StatusIcon = getStatusIcon(service.status)
+                return (
                   <div
-                    className={`p-2 rounded-lg ${
-                      service.status === "running"
-                        ? "bg-green-100 text-green-600"
-                        : service.status === "warning"
-                          ? "bg-yellow-100 text-yellow-600"
-                          : "bg-red-100 text-red-600"
-                    }`}
+                    key={index}
+                    className="flex items-center justify-between p-3 border rounded-lg hover:shadow-md transition-all duration-200 cursor-pointer"
+                    onClick={() => {
+                      if (service.name === "数据库") router.push("/data-integration")
+                      else if (service.name === "Web服务器") router.push("/system-testing")
+                      else router.push("/performance-optimization")
+                    }}
                   >
-                    <service.icon className="w-4 h-4" />
+                    <div className="flex items-center gap-3">
+                      <StatusIcon
+                        className={`w-5 h-5 ${service.status === "running" ? "text-green-600" : service.status === "warning" ? "text-yellow-600" : "text-red-600"}`}
+                      />
+                      <div>
+                        <h4 className="font-medium text-gray-900">{service.name}</h4>
+                        <p className="text-sm text-gray-500">运行时间: {service.uptime}</p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <Badge className={getStatusColor(service.status)}>
+                        {service.status === "running" ? "正常" : service.status === "warning" ? "警告" : "停止"}
+                      </Badge>
+                      <p className="text-xs text-gray-500 mt-1">{service.lastCheck}</p>
+                    </div>
                   </div>
+                )
+              })}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* 性能指标 */}
+        <Card className="border-t-4 border-t-green-400">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Activity className="w-5 h-5 text-green-600" />
+              性能指标
+            </CardTitle>
+            <CardDescription>系统性能关键指标监控</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-6">
+              <div
+                className="flex items-center justify-between cursor-pointer hover:bg-gray-50 p-2 rounded"
+                onClick={() => router.push("/system-testing")}
+              >
+                <div className="flex items-center gap-3">
+                  <Clock className="w-5 h-5 text-blue-600" />
                   <div>
-                    <h4 className="font-medium text-slate-800">{service.name}</h4>
-                    <p className="text-sm text-slate-600">运行时间: {service.uptime}</p>
+                    <p className="font-medium">系统运行时间</p>
+                    <p className="text-sm text-gray-500">连续运行时长</p>
                   </div>
                 </div>
-                <Badge
-                  variant={
-                    service.status === "running"
-                      ? "default"
-                      : service.status === "warning"
-                        ? "secondary"
-                        : "destructive"
-                  }
-                  className={
-                    service.status === "running"
-                      ? "bg-green-100 text-green-800"
-                      : service.status === "warning"
-                        ? "bg-yellow-100 text-yellow-800"
-                        : "bg-red-100 text-red-800"
-                  }
-                >
-                  {service.status === "running" ? "正常" : service.status === "warning" ? "警告" : "异常"}
-                </Badge>
+                <div className="text-right">
+                  <p className="text-lg font-semibold text-green-600">{metrics.uptime}</p>
+                </div>
               </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
 
-      {/* 系统日志 */}
-      <Card className="bg-white border border-slate-200 shadow-sm">
+              <div
+                className="flex items-center justify-between cursor-pointer hover:bg-gray-50 p-2 rounded"
+                onClick={() => router.push("/customers")}
+              >
+                <div className="flex items-center gap-3">
+                  <Wifi className="w-5 h-5 text-green-600" />
+                  <div>
+                    <p className="font-medium">活跃连接数</p>
+                    <p className="text-sm text-gray-500">当前并发连接</p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <p className="text-lg font-semibold">{metrics.activeConnections.toLocaleString()}</p>
+                </div>
+              </div>
+
+              <div
+                className="flex items-center justify-between cursor-pointer hover:bg-gray-50 p-2 rounded"
+                onClick={() => router.push("/performance-optimization")}
+              >
+                <div className="flex items-center gap-3">
+                  <TrendingUp className="w-5 h-5 text-purple-600" />
+                  <div>
+                    <p className="font-medium">平均响应时间</p>
+                    <p className="text-sm text-gray-500">API响应延迟</p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <p className={`text-lg font-semibold ${getMetricColor(metrics.responseTime, "response")}`}>
+                    {metrics.responseTime}ms
+                  </p>
+                </div>
+              </div>
+
+              <div
+                className="flex items-center justify-between cursor-pointer hover:bg-gray-50 p-2 rounded"
+                onClick={() => router.push("/security")}
+              >
+                <div className="flex items-center gap-3">
+                  <AlertTriangle className="w-5 h-5 text-orange-600" />
+                  <div>
+                    <p className="font-medium">错误率</p>
+                    <p className="text-sm text-gray-500">系统错误百分比</p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <p className={`text-lg font-semibold ${getMetricColor(metrics.errorRate * 100, "error")}`}>
+                    {(metrics.errorRate * 100).toFixed(2)}%
+                  </p>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* 监控详情标签页 */}
+      <Card className="border-t-4 border-t-purple-400">
         <CardHeader>
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-lg text-slate-800">系统日志</CardTitle>
-            <Button variant="outline" size="sm" onClick={() => handleCardClick("/system-management")}>
-              <Clock className="w-4 h-4 mr-2" />
-              查看全部
-            </Button>
-          </div>
+          <CardTitle className="flex items-center gap-2">
+            <Database className="w-5 h-5 text-purple-600" />
+            详细监控
+          </CardTitle>
+          <CardDescription>系统各组件详细监控信息</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="space-y-3">
-            {[
-              {
-                time: "2024-01-15 14:30:25",
-                level: "INFO",
-                message: "系统启动完成",
-                type: "info",
-              },
-              {
-                time: "2024-01-15 14:25:12",
-                level: "WARN",
-                message: "内存使用率超过70%",
-                type: "warning",
-              },
-              {
-                time: "2024-01-15 14:20:08",
-                level: "INFO",
-                message: "数据库连接池已初始化",
-                type: "info",
-              },
-              {
-                time: "2024-01-15 14:15:33",
-                level: "ERROR",
-                message: "邮件服务连接超时",
-                type: "error",
-              },
-            ].map((log, index) => (
-              <div key={index} className="flex items-center gap-4 p-3 rounded-lg hover:bg-slate-50 transition-colors">
+          <Tabs defaultValue="performance" className="w-full">
+            <TabsList className="grid w-full grid-cols-4">
+              <TabsTrigger value="performance">性能</TabsTrigger>
+              <TabsTrigger value="security">安全</TabsTrigger>
+              <TabsTrigger value="logs">日志</TabsTrigger>
+              <TabsTrigger value="alerts">告警</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="performance" className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div
-                  className={`px-2 py-1 rounded text-xs font-medium ${
-                    log.type === "info"
-                      ? "bg-blue-100 text-blue-800"
-                      : log.type === "warning"
-                        ? "bg-yellow-100 text-yellow-800"
-                        : "bg-red-100 text-red-800"
-                  }`}
+                  className="p-4 bg-blue-50 rounded-lg cursor-pointer hover:shadow-md transition-all"
+                  onClick={() => router.push("/performance-optimization")}
                 >
-                  {log.level}
+                  <h4 className="font-semibold text-blue-900 mb-2">CPU性能</h4>
+                  <p className="text-sm text-blue-700">当前负载: {metrics.cpuUsage}%</p>
+                  <p className="text-sm text-blue-700">平均负载: 42%</p>
+                  <p className="text-sm text-blue-700">温度: 65°C</p>
                 </div>
-                <div className="flex-1">
-                  <p className="text-sm text-slate-800">{log.message}</p>
-                  <p className="text-xs text-slate-500">{log.time}</p>
+                <div
+                  className="p-4 bg-green-50 rounded-lg cursor-pointer hover:shadow-md transition-all"
+                  onClick={() => router.push("/performance-optimization")}
+                >
+                  <h4 className="font-semibold text-green-900 mb-2">内存性能</h4>
+                  <p className="text-sm text-green-700">已用内存: {metrics.memoryUsage}%</p>
+                  <p className="text-sm text-green-700">可用内存: {100 - metrics.memoryUsage}%</p>
+                  <p className="text-sm text-green-700">缓存命中率: 94.2%</p>
+                </div>
+                <div
+                  className="p-4 bg-orange-50 rounded-lg cursor-pointer hover:shadow-md transition-all"
+                  onClick={() => router.push("/data-integration")}
+                >
+                  <h4 className="font-semibold text-orange-900 mb-2">磁盘I/O</h4>
+                  <p className="text-sm text-orange-700">使用率: {metrics.diskUsage}%</p>
+                  <p className="text-sm text-orange-700">IOPS: 1,250</p>
+                  <p className="text-sm text-orange-700">读写速度: 500MB/s</p>
+                </div>
+                <div
+                  className="p-4 bg-purple-50 rounded-lg cursor-pointer hover:shadow-md transition-all"
+                  onClick={() => router.push("/system-testing")}
+                >
+                  <h4 className="font-semibold text-purple-900 mb-2">网络性能</h4>
+                  <p className="text-sm text-purple-700">负载: {metrics.networkLoad}%</p>
+                  <p className="text-sm text-purple-700">延迟: {metrics.responseTime}ms</p>
+                  <p className="text-sm text-purple-700">带宽: 1Gbps</p>
                 </div>
               </div>
-            ))}
-          </div>
+            </TabsContent>
+
+            <TabsContent value="security">
+              <div className="text-center py-8">
+                <Shield className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                <p className="text-gray-600">安全监控面板</p>
+                <p className="text-sm text-gray-500 mt-2">防火墙状态、入侵检测、安全扫描结果</p>
+                <Button onClick={() => router.push("/security")} className={`${buttonStyles.outline} mt-4`}>
+                  查看安全详情
+                </Button>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="logs">
+              <div className="text-center py-8">
+                <Activity className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                <p className="text-gray-600">系统日志查看器</p>
+                <p className="text-sm text-gray-500 mt-2">应用日志、错误日志、访问日志</p>
+                <Button
+                  onClick={() => toast({ title: "功能开发中", description: "日志查看功能即将上线" })}
+                  className={`${buttonStyles.outline} mt-4`}
+                >
+                  查看系统日志
+                </Button>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="alerts">
+              <div className="space-y-3">
+                <div
+                  className="flex items-center space-x-3 p-3 bg-amber-50 rounded-lg border border-amber-200 cursor-pointer hover:shadow-md transition-all"
+                  onClick={() => router.push("/data-integration")}
+                >
+                  <AlertTriangle className="w-5 h-5 text-amber-500" />
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-slate-800">磁盘空间警告</p>
+                    <p className="text-xs text-slate-500">备份磁盘使用率达到85%，建议清理旧文件</p>
+                  </div>
+                  <Badge className="bg-amber-100 text-amber-800 border-amber-300">警告</Badge>
+                </div>
+                <div
+                  className="flex items-center space-x-3 p-3 bg-blue-50 rounded-lg border border-blue-200 cursor-pointer hover:shadow-md transition-all"
+                  onClick={() => router.push("/system-testing")}
+                >
+                  <Wifi className="w-5 h-5 text-blue-500" />
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-slate-800">网络连接</p>
+                    <p className="text-xs text-slate-500">检测到间歇性网络延迟，正在监控中</p>
+                  </div>
+                  <Badge className="bg-blue-100 text-blue-800 border-blue-300">监控</Badge>
+                </div>
+                <div
+                  className="flex items-center space-x-3 p-3 bg-green-50 rounded-lg border border-green-200 cursor-pointer hover:shadow-md transition-all"
+                  onClick={() => router.push("/system-management")}
+                >
+                  <CheckCircle className="w-5 h-5 text-green-500" />
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-slate-800">系统更新</p>
+                    <p className="text-xs text-slate-500">所有系统组件已更新到最新版本</p>
+                  </div>
+                  <Badge className="bg-green-100 text-green-800 border-green-300">正常</Badge>
+                </div>
+              </div>
+            </TabsContent>
+          </Tabs>
         </CardContent>
       </Card>
     </div>

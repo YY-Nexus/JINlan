@@ -1,6 +1,5 @@
 "use client"
 
-import { useState } from "react"
 import { PageContainer } from "@/components/layout/page-container"
 import { FloatingNavButtons } from "@/components/ui/floating-nav-buttons"
 import { EnhancedCard } from "@/components/ui/enhanced-card"
@@ -8,13 +7,9 @@ import { EnhancedButton } from "@/components/ui/enhanced-button"
 import { SalesChart } from "@/components/charts/sales-chart"
 import { FinanceChart } from "@/components/charts/finance-chart"
 import { PerformanceChart } from "@/components/charts/performance-chart"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { BarChart3, TrendingUp, Download, Eye, Users, DollarSign } from "lucide-react"
-import { getProgressColor } from "@/lib/design-system"
 
 export default function AnalyticsPage() {
-  const [selectedPeriod, setSelectedPeriod] = useState("month")
-
   return (
     <PageContainer>
       <div className="space-y-6">
@@ -25,17 +20,6 @@ export default function AnalyticsPage() {
             <p className="text-slate-600 mt-1">深入了解业务数据和趋势</p>
           </div>
           <div className="flex gap-2">
-            <Select value={selectedPeriod} onValueChange={setSelectedPeriod}>
-              <SelectTrigger className="w-32">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="week">本周</SelectItem>
-                <SelectItem value="month">本月</SelectItem>
-                <SelectItem value="quarter">本季度</SelectItem>
-                <SelectItem value="year">本年度</SelectItem>
-              </SelectContent>
-            </Select>
             <EnhancedButton variant="outline">
               <Eye className="w-4 h-4 mr-2" />
               实时监控
@@ -162,13 +146,8 @@ export default function AnalyticsPage() {
                     <p className="font-medium text-slate-800">{item.page}</p>
                     <p className="text-sm text-slate-600">{item.views} 次访问</p>
                   </div>
-                  <div className="w-20">
-                    <div className="w-full bg-slate-200 rounded-full h-2">
-                      <div
-                        className={`h-2 rounded-full transition-all duration-500 ${getProgressColor(item.percentage)}`}
-                        style={{ width: `${item.percentage}%` }}
-                      />
-                    </div>
+                  <div className="w-20 bg-slate-200 rounded-full h-2">
+                    <div className="bg-sky-500 h-2 rounded-full" style={{ width: `${item.percentage}%` }}></div>
                   </div>
                 </div>
               ))}

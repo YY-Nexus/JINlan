@@ -80,7 +80,7 @@ export function ApplicationAnalysisReport() {
         <Card className="bg-white/80 backdrop-blur-sm border border-sky-200 rounded-xl shadow-lg">
           <CardHeader className="bg-gradient-to-r from-sky-50 to-blue-50 border-b border-sky-100">
             <CardTitle className="text-xl text-slate-800">核心功能模块分析</CardTitle>
-            <CardDescription>11个主要业务模块，覆盖企业管理全流程</CardDescription>
+            <CardDescription>11个主要业务模块，覆盖企业管理��流程</CardDescription>
           </CardHeader>
           <CardContent className="p-6">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -373,7 +373,7 @@ export function ApplicationAnalysisReport() {
               </div>
               <div className="p-4 bg-red-50 rounded-lg border border-red-200">
                 <h3 className="font-semibold text-red-800 mb-2">🔒 企业级安全</h3>
-                <p className="text-sm text-slate-600">完善的权限管理、数据加密、安全审计，保障企业数据安全</p>
+                <p className="text-sm text-slate-600">完善��权限管理、数据加密、安全审计，保障企业数据安全</p>
               </div>
               <div className="p-4 bg-indigo-50 rounded-lg border border-indigo-200">
                 <h3 className="font-semibold text-indigo-800 mb-2">🎨 现代化UI</h3>

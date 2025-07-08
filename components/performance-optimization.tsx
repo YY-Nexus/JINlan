@@ -492,7 +492,7 @@ export function PerformanceOptimization() {
                   <span className="font-semibold text-red-600">3</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm">网络错误</span>
+                  <span className="text-sm">���络错误</span>
                   <span className="font-semibold text-yellow-600">1</span>
                 </div>
                 <div className="flex items-center justify-between">

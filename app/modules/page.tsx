@@ -6,7 +6,7 @@ import { FloatingNavButtons } from "@/components/ui/floating-nav-buttons"
 export default function ModulesPage() {
   return (
     <div className="p-6">
-      {/* 页面头部区域 - 统一设计规范 */}
+      {/* 页面头部区域 - 统一设计规�� */}
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-slate-900">应用总览</h1>

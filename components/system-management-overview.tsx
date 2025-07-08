@@ -4,11 +4,6 @@ import { useState } from "react"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Badge } from "@/components/ui/badge"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Switch } from "@/components/ui/switch"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import {
   Activity,
   Database,
@@ -20,13 +15,8 @@ import {
   TrendingUp,
   Settings,
   RefreshCw,
-  Download,
-  Users,
-  Search,
 } from "lucide-react"
 import { useRouter } from "next/navigation"
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Textarea } from "@/components/ui/textarea"
 
 interface SystemStatus {
   category: string
@@ -41,34 +31,9 @@ interface SystemStatus {
   progressColor: string
 }
 
-interface SystemConfig {
-  id: string
-  name: string
-  category: string
-  value: string | boolean | number
-  type: "text" | "boolean" | "number" | "select"
-  options?: string[]
-  description: string
-  editable: boolean
-}
-
-interface SystemLog {
-  id: string
-  timestamp: Date
-  level: "info" | "warning" | "error" | "debug"
-  module: string
-  message: string
-  details?: string
-  user?: string
-}
-
 export function SystemManagementOverview() {
   const router = useRouter()
   const [isRefreshing, setIsRefreshing] = useState(false)
-  const [searchTerm, setSearchTerm] = useState("")
-  const [selectedCategory, setSelectedCategory] = useState("all")
-  const [isConfigDialogOpen, setIsConfigDialogOpen] = useState(false)
-  const [selectedConfig, setSelectedConfig] = useState<SystemConfig | null>(null)
 
   const systemStatuses: SystemStatus[] = [
     {
@@ -90,7 +55,7 @@ export function SystemManagementOverview() {
       description: "部分模块需要优化",
       lastCheck: new Date(Date.now() - 10 * 60 * 1000),
       icon: Zap,
-      route: "/performance-optimization",
+      route: "/performance",
       colorTheme: "green",
       borderColor: "border-l-green-500",
       progressColor: "bg-gradient-to-r from-green-400 to-green-500",
@@ -127,139 +92,9 @@ export function SystemManagementOverview() {
       lastCheck: new Date(Date.now() - 1 * 60 * 1000),
       icon: Shield,
       route: "/security",
-      colorTheme: "red",
-      borderColor: "border-l-red-500",
-      progressColor: "bg-gradient-to-r from-red-400 to-red-500",
-    },
-  ]
-
-  const systemConfigs: SystemConfig[] = [
-    {
-      id: "max_users",
-      name: "最大用户数",
-      category: "用户管理",
-      value: 1000,
-      type: "number",
-      description: "系统支持的最大并发用户数",
-      editable: true,
-    },
-    {
-      id: "session_timeout",
-      name: "会话超时时间",
-      category: "安全设置",
-      value: 30,
-      type: "number",
-      description: "用户会话超时时间（分钟）",
-      editable: true,
-    },
-    {
-      id: "auto_backup",
-      name: "自动备份",
-      category: "数据管理",
-      value: true,
-      type: "boolean",
-      description: "启用自动数据备份功能",
-      editable: true,
-    },
-    {
-      id: "backup_frequency",
-      name: "备份频率",
-      category: "数据管理",
-      value: "daily",
-      type: "select",
-      options: ["hourly", "daily", "weekly", "monthly"],
-      description: "自动备份执行频率",
-      editable: true,
-    },
-    {
-      id: "log_level",
-      name: "日志级别",
-      category: "系统设置",
-      value: "info",
-      type: "select",
-      options: ["debug", "info", "warning", "error"],
-      description: "系统日志记录级别",
-      editable: true,
-    },
-    {
-      id: "email_notifications",
-      name: "邮件通知",
-      category: "通知设置",
-      value: true,
-      type: "boolean",
-      description: "启用邮件通知功能",
-      editable: true,
-    },
-    {
-      id: "api_rate_limit",
-      name: "API限流",
-      category: "安全设置",
-      value: 1000,
-      type: "number",
-      description: "每小时API调用限制",
-      editable: true,
-    },
-    {
-      id: "maintenance_mode",
-      name: "维护模式",
-      category: "系统设置",
-      value: false,
-      type: "boolean",
-      description: "启用系统维护模式",
-      editable: true,
-    },
-  ]
-
-  const systemLogs: SystemLog[] = [
-    {
-      id: "1",
-      timestamp: new Date(Date.now() - 5 * 60 * 1000),
-      level: "info",
-      module: "系统启动",
-      message: "系统启动完成，所有服务正常运行",
-      user: "系统",
-    },
-    {
-      id: "2",
-      timestamp: new Date(Date.now() - 15 * 60 * 1000),
-      level: "warning",
-      module: "性能监控",
-      message: "CPU使用率超过80%，建议检查系统负载",
-      details: "当前CPU使用率：85%，内存使用率：72%",
-    },
-    {
-      id: "3",
-      timestamp: new Date(Date.now() - 30 * 60 * 1000),
-      level: "info",
-      module: "数据备份",
-      message: "自动备份任务执行成功",
-      details: "备份文件大小：2.3GB，耗时：5分钟",
-      user: "系统",
-    },
-    {
-      id: "4",
-      timestamp: new Date(Date.now() - 45 * 60 * 1000),
-      level: "error",
-      module: "邮件服务",
-      message: "邮件服务连接失败",
-      details: "SMTP服务器连接超时，请检查网络配置",
-    },
-    {
-      id: "5",
-      timestamp: new Date(Date.now() - 60 * 60 * 1000),
-      level: "info",
-      module: "用户管理",
-      message: "新用户注册",
-      details: "用户：张三，邮箱：zhang@example.com",
-      user: "张三",
-    },
-    {
-      id: "6",
-      timestamp: new Date(Date.now() - 75 * 60 * 1000),
-      level: "warning",
-      module: "安全监控",
-      message: "检测到异常登录尝试",
-      details: "IP地址：192.168.1.100，尝试次数：5次",
+      colorTheme: "orange",
+      borderColor: "border-l-orange-500",
+      progressColor: "bg-gradient-to-r from-orange-400 to-orange-500",
     },
   ]
 
@@ -277,7 +112,7 @@ export function SystemManagementOverview() {
       name: "性能优化",
       description: "启动系统性能优化流程",
       icon: Zap,
-      action: () => router.push("/performance-optimization"),
+      action: () => router.push("/performance"),
       colorTheme: "green",
       borderColor: "border-l-green-500",
       bgColor: "bg-green-500",
@@ -296,27 +131,9 @@ export function SystemManagementOverview() {
       description: "执行安全漏洞扫描",
       icon: Shield,
       action: () => router.push("/security"),
-      colorTheme: "red",
-      borderColor: "border-l-red-500",
-      bgColor: "bg-red-500",
-    },
-    {
-      name: "系统备份",
-      description: "立即执行系统数据备份",
-      icon: Download,
-      action: () => handleBackup(),
-      colorTheme: "indigo",
-      borderColor: "border-l-indigo-500",
-      bgColor: "bg-indigo-500",
-    },
-    {
-      name: "重启服务",
-      description: "重启所有系统服务",
-      icon: RefreshCw,
-      action: () => handleRestart(),
-      colorTheme: "yellow",
-      borderColor: "border-l-yellow-500",
-      bgColor: "bg-yellow-500",
+      colorTheme: "orange",
+      borderColor: "border-l-orange-500",
+      bgColor: "bg-orange-500",
     },
   ]
 
@@ -363,32 +180,16 @@ export function SystemManagementOverview() {
       message: "检测到异常登录尝试",
       timestamp: new Date(Date.now() - 3 * 60 * 60 * 1000),
       status: "warning",
-      colorTheme: "red",
-      borderColor: "border-l-red-500",
+      colorTheme: "orange",
+      borderColor: "border-l-orange-500",
     },
   ]
 
   const refreshSystemStatus = async () => {
     setIsRefreshing(true)
+    // 模拟刷新过程
     await new Promise((resolve) => setTimeout(resolve, 2000))
     setIsRefreshing(false)
-  }
-
-  const handleBackup = async () => {
-    // 模拟备份操作
-    console.log("开始系统备份...")
-  }
-
-  const handleRestart = async () => {
-    // 模拟重启操作
-    console.log("重启系统服务...")
-  }
-
-  const handleConfigSave = (config: SystemConfig) => {
-    // 保存配置
-    console.log("保存配置:", config)
-    setIsConfigDialogOpen(false)
-    setSelectedConfig(null)
   }
 
   const getStatusColor = (status: string) => {
@@ -446,35 +247,6 @@ export function SystemManagementOverview() {
         return "text-blue-600 bg-blue-100"
     }
   }
-
-  const getLogLevelColor = (level: string) => {
-    switch (level) {
-      case "info":
-        return "bg-blue-100 text-blue-800"
-      case "warning":
-        return "bg-yellow-100 text-yellow-800"
-      case "error":
-        return "bg-red-100 text-red-800"
-      case "debug":
-        return "bg-gray-100 text-gray-800"
-      default:
-        return "bg-gray-100 text-gray-800"
-    }
-  }
-
-  const filteredConfigs = systemConfigs.filter((config) => {
-    const matchesSearch =
-      config.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      config.description.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesCategory = selectedCategory === "all" || config.category === selectedCategory
-    return matchesSearch && matchesCategory
-  })
-
-  const filteredLogs = systemLogs.filter(
-    (log) =>
-      log.message.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      log.module.toLowerCase().includes(searchTerm.toLowerCase()),
-  )
 
   const overallScore = Math.round(systemStatuses.reduce((sum, status) => sum + status.score, 0) / systemStatuses.length)
 
@@ -549,12 +321,10 @@ export function SystemManagementOverview() {
       </div>
 
       <Tabs defaultValue="overview" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-5">
+        <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="overview">系统概览</TabsTrigger>
           <TabsTrigger value="actions">快捷操作</TabsTrigger>
           <TabsTrigger value="activities">活动日志</TabsTrigger>
-          <TabsTrigger value="configs">系统配置</TabsTrigger>
-          <TabsTrigger value="logs">系统日志</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-6">
@@ -606,7 +376,7 @@ export function SystemManagementOverview() {
         </TabsContent>
 
         <TabsContent value="actions" className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {quickActions.map((action, index) => (
               <Card
                 key={index}
@@ -654,186 +424,7 @@ export function SystemManagementOverview() {
             ))}
           </div>
         </TabsContent>
-
-        <TabsContent value="configs" className="space-y-4">
-          <div className="flex gap-4 mb-4">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-              <Input
-                placeholder="搜索配置项..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
-              />
-            </div>
-            <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-              <SelectTrigger className="w-48">
-                <SelectValue placeholder="选择分类" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">全部分类</SelectItem>
-                <SelectItem value="用户管理">用户管理</SelectItem>
-                <SelectItem value="安全设置">安全设置</SelectItem>
-                <SelectItem value="数据管理">数据管理</SelectItem>
-                <SelectItem value="系统设置">系统设置</SelectItem>
-                <SelectItem value="通知设置">通知设置</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="grid gap-4">
-            {filteredConfigs.map((config) => (
-              <Card key={config.id} className="p-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-1">
-                      <h3 className="font-semibold text-slate-900">{config.name}</h3>
-                      <Badge variant="outline">{config.category}</Badge>
-                    </div>
-                    <p className="text-sm text-slate-600 mb-2">{config.description}</p>
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm text-slate-500">当前值:</span>
-                      {config.type === "boolean" ? (
-                        <Badge className={config.value ? "bg-green-100 text-green-800" : "bg-gray-100 text-gray-800"}>
-                          {config.value ? "启用" : "禁用"}
-                        </Badge>
-                      ) : (
-                        <span className="font-medium">{config.value.toString()}</span>
-                      )}
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    {config.editable && (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => {
-                          setSelectedConfig(config)
-                          setIsConfigDialogOpen(true)
-                        }}
-                      >
-                        <Settings className="w-3 h-3 mr-1" />
-                        编辑
-                      </Button>
-                    )}
-                  </div>
-                </div>
-              </Card>
-            ))}
-          </div>
-        </TabsContent>
-
-        <TabsContent value="logs" className="space-y-4">
-          <div className="flex gap-4 mb-4">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-              <Input
-                placeholder="搜索日志..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
-              />
-            </div>
-            <Button variant="outline">
-              <Download className="w-4 h-4 mr-2" />
-              导出日志
-            </Button>
-          </div>
-
-          <div className="space-y-3">
-            {filteredLogs.map((log) => (
-              <Card key={log.id} className="p-4">
-                <div className="flex items-start gap-4">
-                  <Badge className={getLogLevelColor(log.level)}>{log.level.toUpperCase()}</Badge>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="font-medium text-slate-900">{log.module}</span>
-                      <span className="text-xs text-slate-500">{log.timestamp.toLocaleString()}</span>
-                    </div>
-                    <p className="text-sm text-slate-700 mb-1">{log.message}</p>
-                    {log.details && <p className="text-xs text-slate-500 bg-slate-50 p-2 rounded">{log.details}</p>}
-                    {log.user && (
-                      <div className="flex items-center gap-1 mt-2">
-                        <Users className="w-3 h-3 text-slate-400" />
-                        <span className="text-xs text-slate-500">操作用户: {log.user}</span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </Card>
-            ))}
-          </div>
-        </TabsContent>
       </Tabs>
-
-      {/* 配置编辑对话框 */}
-      <Dialog open={isConfigDialogOpen} onOpenChange={setIsConfigDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>编辑配置</DialogTitle>
-            <DialogDescription>修改系统配置项，请谨慎操作</DialogDescription>
-          </DialogHeader>
-          {selectedConfig && (
-            <div className="space-y-4">
-              <div>
-                <Label htmlFor="config-name">配置名称</Label>
-                <Input id="config-name" value={selectedConfig.name} disabled />
-              </div>
-              <div>
-                <Label htmlFor="config-description">描述</Label>
-                <Textarea id="config-description" value={selectedConfig.description} disabled />
-              </div>
-              <div>
-                <Label htmlFor="config-value">配置值</Label>
-                {selectedConfig.type === "boolean" ? (
-                  <div className="flex items-center space-x-2 mt-2">
-                    <Switch
-                      id="config-value"
-                      checked={selectedConfig.value as boolean}
-                      onCheckedChange={(checked) => setSelectedConfig({ ...selectedConfig, value: checked })}
-                    />
-                    <Label htmlFor="config-value">{selectedConfig.value ? "启用" : "禁用"}</Label>
-                  </div>
-                ) : selectedConfig.type === "select" ? (
-                  <Select
-                    value={selectedConfig.value as string}
-                    onValueChange={(value) => setSelectedConfig({ ...selectedConfig, value })}
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {selectedConfig.options?.map((option) => (
-                        <SelectItem key={option} value={option}>
-                          {option}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                ) : (
-                  <Input
-                    id="config-value"
-                    type={selectedConfig.type === "number" ? "number" : "text"}
-                    value={selectedConfig.value.toString()}
-                    onChange={(e) =>
-                      setSelectedConfig({
-                        ...selectedConfig,
-                        value: selectedConfig.type === "number" ? Number.parseInt(e.target.value) || 0 : e.target.value,
-                      })
-                    }
-                  />
-                )}
-              </div>
-              <div className="flex justify-end gap-2">
-                <Button variant="outline" onClick={() => setIsConfigDialogOpen(false)}>
-                  取消
-                </Button>
-                <Button onClick={() => handleConfigSave(selectedConfig)}>保存</Button>
-              </div>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
     </div>
   )
 }

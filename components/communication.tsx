@@ -72,7 +72,7 @@ export function Communication() {
     {
       id: "3",
       sender: "李工程师",
-      content: "技术方案我已经评估过了，可行性很高",
+      content: "技术��案我已经评估过了，可行性很高",
       time: "09:35",
       isOwn: false,
       avatar: "/placeholder.svg?height=32&width=32",

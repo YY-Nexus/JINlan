@@ -1,13 +1,5 @@
-"use client"
-
-import { AdvancedBIReports } from "@/components/advanced-bi-reports"
-import { FloatingNavButtons } from "@/components/ui/floating-nav-buttons"
+import { AdvancedBIDashboard } from "@/components/advanced-bi-dashboard"
 
 export default function AdvancedBIPage() {
-  return (
-    <>
-      <AdvancedBIReports />
-      <FloatingNavButtons />
-    </>
-  )
+  return <AdvancedBIDashboard />
 }

@@ -285,3 +285,5 @@ export function DashboardRealTimeData() {
     </div>
   )
 }
+
+export default DashboardRealTimeData

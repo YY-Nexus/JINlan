@@ -82,13 +82,13 @@ export default function SettingsPage() {
             <p className="text-slate-600 mt-2">管理系统配置和偏好设置</p>
           </div>
           <div className="flex gap-2">
-            <Button variant="outline">
+            <Button variant="outline" onClick={handleExport}>
               <Download className="w-4 h-4 mr-2" />
               导出配置
             </Button>
-            <Button className="bg-blue-600 hover:bg-blue-700">
+            <Button onClick={handleSave} disabled={loading} className="bg-blue-600 hover:bg-blue-700">
               <Save className="w-4 h-4 mr-2" />
-              保存设置
+              {loading ? "保存中..." : "保存设置"}
             </Button>
           </div>
         </div>
@@ -107,38 +107,38 @@ export default function SettingsPage() {
             </CardContent>
           </Card>
 
-          <Card className="bg-white/90 backdrop-blur-sm border border-sky-200/60 rounded-xl shadow-sm hover:shadow-xl hover:border-sky-300/60 transition-all duration-300 hover:scale-105 border-l-4 border-l-blue-500">
+          <Card className="bg-white/90 backdrop-blur-sm border border-sky-200/60 rounded-xl shadow-sm hover:shadow-xl hover:border-sky-300/60 transition-all duration-300 hover:scale-105 border-l-4 border-l-green-500">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-lg font-bold text-slate-900">安全等级</p>
                   <p className="text-xs text-green-600 mt-1">高</p>
                 </div>
-                <Shield className="w-8 h-8 text-blue-500" />
+                <Shield className="w-8 h-8 text-green-500" />
               </div>
             </CardContent>
           </Card>
 
-          <Card className="bg-white/90 backdrop-blur-sm border border-sky-200/60 rounded-xl shadow-sm hover:shadow-xl hover:border-sky-300/60 transition-all duration-300 hover:scale-105 border-l-4 border-l-blue-500">
+          <Card className="bg-white/90 backdrop-blur-sm border border-sky-200/60 rounded-xl shadow-sm hover:shadow-xl hover:border-sky-300/60 transition-all duration-300 hover:scale-105 border-l-4 border-l-orange-500">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-lg font-bold text-slate-900">在线用户</p>
                   <p className="text-xs text-slate-500 mt-1">24人</p>
                 </div>
-                <Users className="w-8 h-8 text-blue-500" />
+                <Users className="w-8 h-8 text-orange-500" />
               </div>
             </CardContent>
           </Card>
 
-          <Card className="bg-white/90 backdrop-blur-sm border border-sky-200/60 rounded-xl shadow-sm hover:shadow-xl hover:border-sky-300/60 transition-all duration-300 hover:scale-105 border-l-4 border-l-blue-500">
+          <Card className="bg-white/90 backdrop-blur-sm border border-sky-200/60 rounded-xl shadow-sm hover:shadow-xl hover:border-sky-300/60 transition-all duration-300 hover:scale-105 border-l-4 border-l-purple-500">
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-lg font-bold text-slate-900">存储使用</p>
                   <p className="text-xs text-slate-500 mt-1">68%</p>
                 </div>
-                <Database className="w-8 h-8 text-blue-500" />
+                <Database className="w-8 h-8 text-purple-500" />
               </div>
             </CardContent>
           </Card>
@@ -192,7 +192,7 @@ export default function SettingsPage() {
             </TabsContent>
 
             <TabsContent value="security" className="space-y-6">
-              <Card className="bg-white/90 backdrop-blur-sm border border-sky-200/60 rounded-xl shadow-sm hover:shadow-lg hover:border-sky-300/60 transition-all duration-300 border-l-4 border-l-blue-500">
+              <Card className="bg-white/90 backdrop-blur-sm border border-sky-200/60 rounded-xl shadow-sm hover:shadow-lg hover:border-sky-300/60 transition-all duration-300 border-l-4 border-l-green-500">
                 <CardHeader>
                   <CardTitle className="text-lg">安全配置</CardTitle>
                   <CardDescription>管理系统安全相关设置</CardDescription>
@@ -234,7 +234,7 @@ export default function SettingsPage() {
             </TabsContent>
 
             <TabsContent value="notifications" className="space-y-6">
-              <Card className="bg-white/90 backdrop-blur-sm border border-sky-200/60 rounded-xl shadow-sm hover:shadow-lg hover:border-sky-300/60 transition-all duration-300 border-l-4 border-l-blue-500">
+              <Card className="bg-white/90 backdrop-blur-sm border border-sky-200/60 rounded-xl shadow-sm hover:shadow-lg hover:border-sky-300/60 transition-all duration-300 border-l-4 border-l-orange-500">
                 <CardHeader>
                   <CardTitle className="text-lg">通知偏好</CardTitle>
                   <CardDescription>配置系统通知方式</CardDescription>
@@ -290,7 +290,7 @@ export default function SettingsPage() {
             </TabsContent>
 
             <TabsContent value="appearance" className="space-y-6">
-              <Card className="bg-white/90 backdrop-blur-sm border border-sky-200/60 rounded-xl shadow-sm hover:shadow-lg hover:border-sky-300/60 transition-all duration-300 border-l-4 border-l-blue-500">
+              <Card className="bg-white/90 backdrop-blur-sm border border-sky-200/60 rounded-xl shadow-sm hover:shadow-lg hover:border-sky-300/60 transition-all duration-300 border-l-4 border-l-purple-500">
                 <CardHeader>
                   <CardTitle className="text-lg">界面外观</CardTitle>
                   <CardDescription>自定义系统界面外观</CardDescription>
@@ -329,7 +329,7 @@ export default function SettingsPage() {
             </TabsContent>
 
             <TabsContent value="backup" className="space-y-6">
-              <Card className="bg-white/90 backdrop-blur-sm border border-sky-200/60 rounded-xl shadow-sm hover:shadow-lg hover:border-sky-300/60 transition-all duration-300 border-l-4 border-l-blue-500">
+              <Card className="bg-white/90 backdrop-blur-sm border border-sky-200/60 rounded-xl shadow-sm hover:shadow-lg hover:border-sky-300/60 transition-all duration-300 border-l-4 border-l-indigo-500">
                 <CardHeader>
                   <CardTitle className="text-lg">数据备份</CardTitle>
                   <CardDescription>管理系统数据备份设置</CardDescription>
@@ -379,14 +379,6 @@ export default function SettingsPage() {
               </Card>
             </TabsContent>
           </Tabs>
-
-          {/* 保存按钮 */}
-          <div className="flex justify-end mt-8">
-            <Button onClick={handleSave} disabled={loading} className="bg-blue-600 hover:bg-blue-700">
-              <Save className="w-4 h-4 mr-2" />
-              {loading ? "保存中..." : "保存设置"}
-            </Button>
-          </div>
         </div>
       </div>
       <FloatingNavButtons />

@@ -1,110 +1,111 @@
 {
-  "name": "JINLAN 企业管理系统",
-  "short_name": "JINLAN EMS",
-  "description": "专业的企业管理系统，支持AI智能助手和多种大模型",
+  "name": "Customer Care Center - Jin Lan Home Furnishing",
+  "short_name": "Jin Lan Care",
+  "description": "Professional customer service management system for Jin Lan Home Furnishing",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#0ea5e9",
+  "theme_color": "#3b82f6",
   "orientation": "portrait-primary",
   "scope": "/",
   "lang": "zh-CN",
+  "dir": "ltr",
   "categories": ["business", "productivity", "utilities"],
   "icons": [
     {
-      "src": "/images/jinlan-logo-new.png",
+      "src": "/images/icons/icon-72x72.png",
       "sizes": "72x72",
       "type": "image/png",
-      "purpose": "any"
+      "purpose": "maskable any"
     },
     {
-      "src": "/images/jinlan-logo-new.png",
+      "src": "/images/icons/icon-96x96.png",
       "sizes": "96x96",
       "type": "image/png",
-      "purpose": "any"
+      "purpose": "maskable any"
     },
     {
-      "src": "/images/jinlan-logo-new.png",
+      "src": "/images/icons/icon-128x128.png",
       "sizes": "128x128",
       "type": "image/png",
-      "purpose": "any"
+      "purpose": "maskable any"
     },
     {
-      "src": "/images/jinlan-logo-new.png",
+      "src": "/images/icons/icon-144x144.png",
       "sizes": "144x144",
       "type": "image/png",
-      "purpose": "any"
+      "purpose": "maskable any"
     },
     {
-      "src": "/images/jinlan-logo-new.png",
+      "src": "/images/icons/icon-152x152.png",
       "sizes": "152x152",
       "type": "image/png",
-      "purpose": "any"
+      "purpose": "maskable any"
     },
     {
-      "src": "/images/jinlan-logo-new.png",
+      "src": "/images/icons/icon-192x192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "maskable any"
     },
     {
-      "src": "/images/jinlan-logo-new.png",
+      "src": "/images/icons/icon-384x384.png",
       "sizes": "384x384",
       "type": "image/png",
-      "purpose": "any"
+      "purpose": "maskable any"
     },
     {
-      "src": "/images/jinlan-logo-new.png",
+      "src": "/images/icons/icon-512x512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "maskable any"
     }
   ],
   "shortcuts": [
     {
-      "name": "仪表盘",
-      "short_name": "仪表盘",
-      "description": "查看系统概览和关键指标",
-      "url": "/",
-      "icons": [
-        {
-          "src": "/images/jinlan-logo-new.png",
-          "sizes": "96x96"
-        }
-      ]
-    },
-    {
-      "name": "AI助手",
-      "short_name": "AI助手",
-      "description": "智能业务分析和决策支持",
-      "url": "/ai-assistant",
-      "icons": [
-        {
-          "src": "/images/jinlan-logo-new.png",
-          "sizes": "96x96"
-        }
-      ]
-    },
-    {
-      "name": "审批中心",
-      "short_name": "审批",
-      "description": "处理待审批事项",
-      "url": "/approval",
-      "icons": [
-        {
-          "src": "/images/jinlan-logo-new.png",
-          "sizes": "96x96"
-        }
-      ]
-    },
-    {
       "name": "客户管理",
       "short_name": "客户",
-      "description": "管理客户信息",
+      "description": "管理客户信息和服务记录",
       "url": "/customers",
       "icons": [
         {
-          "src": "/images/jinlan-logo-new.png",
+          "src": "/images/icons/customers-96x96.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "任务管理",
+      "short_name": "任务",
+      "description": "查看和管理待办任务",
+      "url": "/tasks",
+      "icons": [
+        {
+          "src": "/images/icons/tasks-96x96.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "数据分析",
+      "short_name": "分析",
+      "description": "查看业务数据和报表",
+      "url": "/analytics",
+      "icons": [
+        {
+          "src": "/images/icons/analytics-96x96.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "通知中心",
+      "short_name": "通知",
+      "description": "查看系统通知和消息",
+      "url": "/notifications",
+      "icons": [
+        {
+          "src": "/images/icons/notifications-96x96.png",
           "sizes": "96x96"
         }
       ]
@@ -112,23 +113,41 @@
   ],
   "screenshots": [
     {
-      "src": "/images/screenshot-desktop.png",
+      "src": "/images/screenshots/desktop-dashboard.png",
       "sizes": "1280x720",
       "type": "image/png",
-      "form_factor": "wide",
-      "label": "桌面端主界面"
+      "platform": "wide",
+      "label": "Dashboard view on desktop"
     },
     {
-      "src": "/images/screenshot-mobile.png",
-      "sizes": "375x812",
+      "src": "/images/screenshots/mobile-dashboard.png",
+      "sizes": "375x667",
       "type": "image/png",
-      "form_factor": "narrow",
-      "label": "移动端界面"
+      "platform": "narrow",
+      "label": "Dashboard view on mobile"
+    },
+    {
+      "src": "/images/screenshots/desktop-customers.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "platform": "wide",
+      "label": "Customer management on desktop"
+    },
+    {
+      "src": "/images/screenshots/mobile-customers.png",
+      "sizes": "375x667",
+      "type": "image/png",
+      "platform": "narrow",
+      "label": "Customer management on mobile"
     }
   ],
-  "related_applications": [],
+  "related_applications": [
+    {
+      "platform": "webapp",
+      "url": "https://care.jinlan.com/manifest.json"
+    }
+  ],
   "prefer_related_applications": false,
-  "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
   "edge_side_panel": {
     "preferred_width": 400
   },
@@ -136,5 +155,40 @@
     "client_mode": "navigate-existing"
   },
   "handle_links": "preferred",
-  "capture_links": "existing-client-navigate"
+  "protocol_handlers": [
+    {
+      "protocol": "mailto",
+      "url": "/compose?to=%s"
+    },
+    {
+      "protocol": "tel",
+      "url": "/call?number=%s"
+    }
+  ],
+  "file_handlers": [
+    {
+      "action": "/import",
+      "accept": {
+        "text/csv": [".csv"],
+        "application/vnd.ms-excel": [".xls"],
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": [".xlsx"]
+      }
+    }
+  ],
+  "share_target": {
+    "action": "/share",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url",
+      "files": [
+        {
+          "name": "files",
+          "accept": ["image/*", "text/plain", ".csv", ".xlsx"]
+        }
+      ]
+    }
+  }
 }
